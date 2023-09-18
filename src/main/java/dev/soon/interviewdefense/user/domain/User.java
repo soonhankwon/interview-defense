@@ -4,7 +4,6 @@ import dev.soon.interviewdefense.web.dto.MyPageUpdateForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
@@ -12,7 +11,8 @@ import javax.persistence.*;
 @ToString
 @Getter
 @Entity
-@Table(name = "`user`")
+@Table(name = "`user`", indexes = {
+        @Index(name = "idx_user_email_idx", columnList = "email")})
 public class User {
 
     @Id
@@ -27,7 +27,8 @@ public class User {
 
     private String imageUrl;
 
-    private String position;
+    @Enumerated(EnumType.STRING)
+    private Position position;
 
     private Integer yearOfWorkExperience;
 
@@ -36,7 +37,7 @@ public class User {
         this.nickname = nickname;
         this.snsType = oauth2Provider;
         this.imageUrl = imageUrl;
-        this.position = "default";
+        this.position = Position.DEFAULT;
         this.yearOfWorkExperience = 0;
     }
 

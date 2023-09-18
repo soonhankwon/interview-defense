@@ -1,7 +1,9 @@
 package dev.soon.interviewdefense.web.dto;
 
+import dev.soon.interviewdefense.user.domain.Position;
+
 public record MyPageUpdateForm(
         String nickname,
-        String position,
+        Position position,
         Integer yearOfWorkExperience) {
 }
