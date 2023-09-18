@@ -42,7 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         TokenStatus tokenStatus = jwtService.validateToken(token);
         if(tokenStatus == TokenStatus.EXPIRED) {
-            response.sendRedirect("/login?redirectURL=" + requestURI);
+            response.sendRedirect("/");
             return;
         }
         if(StringUtils.hasText(token) && tokenStatus == TokenStatus.VALID) {
