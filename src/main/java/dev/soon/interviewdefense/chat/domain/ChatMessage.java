@@ -16,6 +16,7 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)
