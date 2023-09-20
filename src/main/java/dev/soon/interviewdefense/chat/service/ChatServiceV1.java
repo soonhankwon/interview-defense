@@ -3,7 +3,7 @@ package dev.soon.interviewdefense.chat.service;
 import dev.soon.interviewdefense.chat.controller.dto.ChatRoomReqDto;
 import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
-import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
+import dev.soon.interviewdefense.chat.domain.ChatSender;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
 import dev.soon.interviewdefense.security.SecurityUser;
 import dev.soon.interviewdefense.user.domain.User;
@@ -20,7 +20,6 @@ public class ChatServiceV1 implements ChatService {
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
-    private final ChatMessageRepository chatMessageRepository;
 
     @Override
     @Transactional
@@ -41,9 +40,17 @@ public class ChatServiceV1 implements ChatService {
 
     @Override
     @Transactional
-    public void saveMessage(Long chatRoomId, SecurityUser securityUser, String res) {
-        Chat chatRoom = chatRepository.findById(chatRoomId).orElseThrow();
-        ChatMessage message = new ChatMessage(res, chatRoom);
-        chatMessageRepository.save(message);
+    public void saveMessage(Long chatRoomId, SecurityUser securityUser, String message, ChatSender sender) {
+        Chat chat = chatRepository.findById(chatRoomId).orElseThrow();
+        ChatMessage chatMessage = new ChatMessage(message, chat, sender);
+        chat.saveMessage(chatMessage);
+    }
+
+    @Override
+    @Transactional
+    public void deleteChat(Long chatRoomId, SecurityUser securityUser) {
+        User user = userRepository.findUserByEmail(securityUser.getUsername()).orElseThrow();
+        Chat chat = chatRepository.findChatByUserAndId(user, chatRoomId).orElseThrow();
+        chatRepository.delete(chat);
     }
 }
