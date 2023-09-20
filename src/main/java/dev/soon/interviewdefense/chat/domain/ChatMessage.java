@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @ToString
@@ -22,8 +23,15 @@ public class ChatMessage {
     @ManyToOne(fetch = FetchType.LAZY)
     private Chat chat;
 
-    public ChatMessage(String message, Chat chat) {
+    @Enumerated(EnumType.STRING)
+    private ChatSender sender;
+
+    private LocalDateTime createAt;
+
+    public ChatMessage(String message, Chat chat, ChatSender sender) {
         this.message = message;
         this.chat = chat;
+        this.sender = sender;
+        this.createAt = LocalDateTime.now();
     }
 }
