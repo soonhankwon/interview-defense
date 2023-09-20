@@ -8,6 +8,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @ToString
@@ -27,9 +29,16 @@ public class Chat {
 
     private LocalDateTime createAt;
 
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private final List<ChatMessage> chatMessages = new ArrayList<>();
+
     public Chat(ChatRoomReqDto dto, User user) {
         this.topic = dto.topic();
         this.user = user;
         this.createAt = LocalDateTime.now();
+    }
+
+    public void saveMessage(ChatMessage chatMessage) {
+        this.chatMessages.add(chatMessage);
     }
 }
