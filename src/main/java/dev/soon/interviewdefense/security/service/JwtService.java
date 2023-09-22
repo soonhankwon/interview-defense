@@ -39,7 +39,7 @@ public class JwtService {
                 .setSubject(email)
                 .claim("auth", "ROLE_USER")
                 .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plus(30, ChronoUnit.MINUTES)))
+                .setExpiration(Date.from(now.plus(120, ChronoUnit.MINUTES)))
                 .signWith(this.key, SignatureAlgorithm.HS256)
                 .compact();
     }
