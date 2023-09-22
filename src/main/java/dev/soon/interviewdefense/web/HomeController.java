@@ -36,8 +36,10 @@ public class HomeController {
         String email = jwtService.getSubjectFromToken(token);
         User user = userRepository.findUserByEmail(email).get();
         List<Chat> chats = chatRepository.findChatsByUser(user);
+        List<Chat> defenseRankChats = chatRepository.findClosedDefenseChatsOrderByScoreDesc();
         model.addAttribute("chats", chats);
         model.addAttribute("user", user);
+        model.addAttribute("rank", defenseRankChats);
         return "loginHome";
     }
 }
