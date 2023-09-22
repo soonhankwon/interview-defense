@@ -87,8 +87,9 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.NCLOUD_HOST }}
-          username: ubuntu
-          key: ${{ secrets.NCLOUD_KEY }}
+          username: ${{ secrets.NCLOUD_USER }}
+          password: ${{ secrets.NCLOUD_KEY }}
+          port: ${{ secrets.NCLOUD_SSH_PORT }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/interviewdefense
             sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/interviewdefense
