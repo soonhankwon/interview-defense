@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ChatTopic {
+    DEFAULT("기본"),
     JAVA("자바"),
     JAVASCRIPT("자바스크립트"),
     KOTLIN("코틀린"),
