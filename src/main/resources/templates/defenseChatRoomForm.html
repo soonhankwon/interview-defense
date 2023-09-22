@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.chatRoom.defense}">디펜스 설정</h2>
+    </div>
+
+    <form action="loginHome.html" th:action th:object="${dto}" method="post">
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지</p>
+        </div>
+        <h4>디펜스는 기본적으로 프로필에 등록된 정보를 바탕으로 진행됩니다.</h4>
+        <h4>메인 기술을 선택하면 해당 질문위주로 디펜스가 진행됩니다.</h4>
+        <hr class="my-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Position:</h4>
+                <p th:text="${user.position.value}"></p>
+            </div>
+            <div class="col-md-6">
+                <h4>Language:</h4>
+                <ul>
+                    <li th:each="language : ${myLanguages}" th:text="${language.getName().value}"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Main Tech:</h4>
+                <label>
+                    <select class="form-control" th:field="*{topic}">
+                        <option th:each="topic : ${T(dev.soon.interviewdefense.chat.domain.ChatTopic).values()}"
+                                th:value="${topic}" th:text="${topic.value}"></option>
+                    </select>
+                </label>
+            </div>
+            <div class="col-md-6">
+                <h4>DefenseTime:</h4>
+                <label>
+                    <select class="form-control" th:field="*{length}">
+                        <option th:each="defense : ${T(dev.soon.interviewdefense.defense.domain.DefenseLength).values()}"
+                                th:value="${defense}"
+                                th:text="${defense.name() + ' ' + defense.value + ' questions'}"></option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <hr class="my-4">
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.start}">시작</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        onclick="location.href='loginHome.html'"
+                        th:onclick="|location.href='@{/}'|"
+                        type="button" th:text="#{button.cancel}">취소
+                </button>
+            </div>
+        </div>
+    </form>
+</div> <!-- /container -->
+</body>
+</html>

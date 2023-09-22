@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .centered {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .kakao-login-button {
+            width: 300px;
+            height: 45px;
+            cursor: pointer; /* 마우스 포인터 모양 변경 */
+            margin-bottom: 20px;
+        }
+
+        .naver-login-button {
+            width: 50px;
+            height: 50px;
+            cursor: pointer; /* 마우스 포인터 모양 변경 */
+        }
+    </style>
+</head>
+<body>
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2>TECH INTERVIEW DEFENSE</h2></div>
+    <div class="row">
+        <div class="col centered">
+            <img th:src="@{/image/kakao_login_large_wide.png}"
+                 th:onclick="|location.href='@{https://kauth.kakao.com/oauth/authorize?client_id=1675048dafc31a67b0e7cdcd5f1d94f2&redirect_uri=http://localhost:8080/oauth/kakao&response_type=code}'|"
+                 class="kakao-login-button">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col centered">
+            <img th:src="@{/image/btnG_아이콘원형.png}"
+                 th:onclick="|location.href='@{https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=tyCKWqdxZyJ1Tm3tcN3n&state=STATE_STRING&redirect_uri=http://localhost:8080/oauth/naver}'|"
+                 class="naver-login-button">
+        </div>
+    </div>
+    <hr class="my-4">
+</div> <!-- /container -->
+</body>
+</html>
