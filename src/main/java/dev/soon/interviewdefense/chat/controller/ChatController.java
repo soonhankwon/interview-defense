@@ -1,14 +1,9 @@
 package dev.soon.interviewdefense.chat.controller;
 
-import com.theokanning.openai.completion.chat.ChatCompletionRequest;
-import com.theokanning.openai.completion.chat.ChatCompletionResult;
-import com.theokanning.openai.service.OpenAiService;
 import dev.soon.interviewdefense.chat.controller.dto.ChatMessageDto;
 import dev.soon.interviewdefense.chat.controller.dto.ChatRoomReqDto;
 import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
-import dev.soon.interviewdefense.chat.domain.ChatSender;
-import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.service.ChatService;
 import dev.soon.interviewdefense.security.SecurityUser;
 import dev.soon.interviewdefense.user.domain.User;
@@ -28,16 +23,13 @@ import java.util.List;
 @RequestMapping("/chat")
 public class ChatController {
     private final ChatService chatService;
-    private final OpenAiService openAiService;
-    private final UserService userServiceImpl;
-    private final ChatMessageRepository chatMessageRepository;
+    private final UserService userService;
 
     @GetMapping("/create")
     public String chatRoom(Model model) {
         model.addAttribute("chat", new Chat());
         return "chatRoomForm";
     }
-
 
     @PostMapping("/create")
     public String createChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
@@ -50,11 +42,10 @@ public class ChatController {
     public String getChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
                               @PathVariable Long chatRoomId, Model model) {
         Chat chatRoom = chatService.getChatRoom(securityUser, chatRoomId);
-        List<ChatMessage> chatMessagesInChatRoom = chatMessageRepository.findChatMessagesByChat(chatRoom);
-
+        List<ChatMessage> chatMessagesInChatRoom = chatService.getChatRoomMessages(chatRoom);
         model.addAttribute("chatMessages", chatMessagesInChatRoom);
         model.addAttribute("chat", chatRoom);
-        User loginUserInfo = userServiceImpl.getLoginUserInfo(securityUser);
+        User loginUserInfo = userService.getLoginUserInfo(securityUser);
         model.addAttribute("user", loginUserInfo);
         model.addAttribute("chatMessageDto", new ChatMessageDto(null));
         return "chatRoom";
@@ -64,20 +55,9 @@ public class ChatController {
     public String sendMessage(@PathVariable Long chatRoomId,
                               @AuthenticationPrincipal SecurityUser securityUser,
                               @ModelAttribute("chatMessageDto") ChatMessageDto dto) {
-        log.info("dto={}", dto);
-        chatService.saveMessage(chatRoomId, securityUser, dto.message(), ChatSender.USER);
-        ChatCompletionRequest request = ChatCompletionRequest.builder()
-                .model("gpt-3.5-turbo")
-                .messages(List.of(
-                        new com.theokanning.openai.completion.chat.ChatMessage("system", "당신은 자바 전문가입니다."),
-                        new com.theokanning.openai.completion.chat.ChatMessage("user", dto.message())
-                ))
-                .maxTokens(1000)
-                .build();
-        ChatCompletionResult chatCompletion = openAiService.createChatCompletion(request);
-        String response = chatCompletion.getChoices().get(0).getMessage().getContent();
-        log.info("response={}", response);
-        chatService.saveMessage(chatRoomId, securityUser, response, ChatSender.AI);
+        Chat chat = chatService.saveUserMessage(chatRoomId, securityUser, dto);
+        String response = chatService.generatePrompt(chat, dto);
+        chatService.saveAIMessage(chatRoomId, securityUser, response);
         return "redirect:/chat/{chatRoomId}";
     }
 
