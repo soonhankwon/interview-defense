@@ -1,11 +1,15 @@
 package dev.soon.interviewdefense.user.domain;
 
+import dev.soon.interviewdefense.web.dto.MyLanguageReqDto;
 import dev.soon.interviewdefense.web.dto.MyPageUpdateForm;
+import dev.soon.interviewdefense.web.dto.MyTechReqDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @ToString
@@ -32,6 +36,12 @@ public class User {
 
     private Integer yearOfWorkExperience;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private final List<Language> languages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private final List<Tech> techs = new ArrayList<>();
+
     public User(String email, String nickname, String oauth2Provider, String imageUrl) {
         this.email = email;
         this.nickname = nickname;
@@ -45,5 +55,13 @@ public class User {
         this.nickname = form.nickname();
         this.position = form.position();
         this.yearOfWorkExperience = form.yearOfWorkExperience();
+    }
+
+    public void addMyLanguage(MyLanguageReqDto dto) {
+        this.languages.add(new Language(this, dto.name()));
+    }
+
+    public void addMyTech(MyTechReqDto dto) {
+        this.techs.add(new Tech(this, dto.name()));
     }
 }
