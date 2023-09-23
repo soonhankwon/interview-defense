@@ -12,6 +12,9 @@
 ## :star2: About the Project
 
 
+<!-- Web URL -->
+### 🌐 Web URL
+- http://27.96.134.7
 <!-- Screenshots -->
 ### :camera: Screenshots
 <div align="center"> 
@@ -23,7 +26,6 @@
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
-
 <details>
   <summary>Client</summary>
   <ul>
