@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 public class ChatController {
-    private final ChatService chatService;
+    private final ChatService chatServiceV2;
     private final UserService userService;
 
     @GetMapping("/create")
@@ -36,15 +36,15 @@ public class ChatController {
     @PostMapping("/create")
     public String createChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
                                  @ModelAttribute("chat") ChatRoomReqDto dto) {
-        Long chatRoomId = chatService.createChatRoom(securityUser, dto);
+        Long chatRoomId = chatServiceV2.createChatRoom(securityUser, dto);
         return "redirect:/chat/" + chatRoomId;
     }
 
     @GetMapping("/{chatRoomId}")
     public String getChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
                               @PathVariable Long chatRoomId, Model model) {
-        Chat chatRoom = chatService.getChatRoom(securityUser, chatRoomId);
-        List<ChatMessage> chatMessagesInChatRoom = chatService.getChatRoomMessages(chatRoom);
+        Chat chatRoom = chatServiceV2.getChatRoom(securityUser, chatRoomId);
+        List<ChatMessage> chatMessagesInChatRoom = chatServiceV2.getChatRoomMessages(chatRoom);
         model.addAttribute("chatMessages", chatMessagesInChatRoom);
         model.addAttribute("chat", chatRoom);
         User loginUserInfo = userService.getLoginUserInfo(securityUser);
@@ -61,16 +61,16 @@ public class ChatController {
         if(bindingResult.hasErrors()) {
             return "redirect:/chat/{chatRoomId}";
         }
-        Chat chat = chatService.saveUserMessage(chatRoomId, securityUser, dto);
-        String response = chatService.generatePrompt(chat, dto);
-        chatService.saveAIMessage(chatRoomId, securityUser, response);
+        Chat chat = chatServiceV2.saveUserMessage(chatRoomId, securityUser, dto);
+        String response = chatServiceV2.generatePrompt(chat, dto);
+        chatServiceV2.saveAIMessage(chatRoomId, securityUser, response);
         return "redirect:/chat/{chatRoomId}";
     }
 
     @PostMapping("/{chatRoomId}/delete")
     public String deleteChat(@PathVariable Long chatRoomId,
                              @AuthenticationPrincipal SecurityUser securityUser) {
-        chatService.deleteChat(chatRoomId, securityUser);
+        chatServiceV2.deleteChat(chatRoomId, securityUser);
         return "redirect:/";
     }
 }
