@@ -40,10 +40,8 @@
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li><a href="https://nextjs.org/">Next.js</a></li>
-    <li><a href="https://reactjs.org/">React.js</a></li>
-    <li><a href="https://tailwindcss.com/">TailwindCSS</a></li>
+    <li><a href="https://www.typescriptlang.org/">Thymeleaf</a></li>
+    <li><a href="https://nextjs.org/">Javascript</a></li>
   </ul>
 </details>
 
