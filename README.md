@@ -4,6 +4,7 @@
 - [About the Project](#star2-about-the-project)
   * [Screenshots](#camera-screenshots)
   * [Tech Stack](#space_invader-tech-stack)
+  * [Architecture](#space_invader-tech-stack)
   * [Features](#dart-features)
   * [Color Reference](#art-color-reference)
 - [Contact](#handshake-contact)
@@ -62,6 +63,12 @@
     <li><a href="https://docs.github.com/ko/actions">Github Actions</a></li>
   </ul>
 </details>
+
+<!-- Architecture -->
+### 🏗️: Architecture
+<div align="center"> 
+<img src="https://github.com/soonhankwon/tech-interview-defense/assets/113872320/dd084992-eeaf-4ce2-95a2-a9ebce0b10c0" width="540" height="330">
+</div>
 
 <!-- Features -->
 ### :dart: Features
