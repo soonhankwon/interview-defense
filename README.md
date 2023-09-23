@@ -56,7 +56,7 @@
 <details>
 <summary>Database</summary>
   <ul>
-    <li><a href="https://www.mysql.com/">MySQL</a></li>
+    <li><a href="https://www.mysql.com/">MySQL 8.0.33</a></li>
   </ul>
 </details>
 
