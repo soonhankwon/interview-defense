@@ -53,6 +53,7 @@
         </div>
         <li>디펜스는 기본적으로 프로필에 등록된 정보를 바탕으로 진행됩니다.</li>
         <li>메인 기술을 선택하면 해당 질문위주로 디펜스가 진행됩니다.</li>
+        <li>Start 클릭 후 로딩이 10~60초 가량 걸릴수 있습니다.</li>
         <hr class="my-4">
         <div class="row">
             <div class="col-md-6">
@@ -90,7 +91,7 @@
         <hr class="my-4">
         <div class="row">
             <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.start}">시작</button>
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.start}" onclick="loading()">시작</button>
             </div>
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
