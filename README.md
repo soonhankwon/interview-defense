@@ -14,12 +14,12 @@
 
 <!-- Screenshots -->
 ### :camera: Screenshots
-
 <div align="center"> 
-  <img src="![home](https://github.com/soonhankwon/dev-space-x-backend/assets/113872320/0a7a7f3b-b7d0-4e62-a6e0-bef64cf2149e)" alt="screenshot"/>
-  <img src="![loginhome](https://github.com/soonhankwon/dev-space-x-backend/assets/113872320/114c4e79-fef2-4b56-82a2-23bcfa90c9dd)" alt="screenshot"/>
+  <img src="https://github.com/soonhankwon/dev-space-x-backend/assets/113872320/0a7a7f3b-b7d0-4e62-a6e0-bef64cf2149e" width="200" height="300" alt="screenshot"/>
+  <img src="https://github.com/soonhankwon/dev-space-x-backend/assets/113872320/114c4e79-fef2-4b56-82a2-23bcfa90c9dd" width="200" height="300" alt="screenshot"/>
+  <img src="https://github.com/soonhankwon/dev-space-x-backend/assets/113872320/d8e3e9b6-5181-4843-a1b7-a26bfdd9d2b4" width="200" height="300" alt="screenshot"/>
+  <img src="https://github.com/soonhankwon/dev-space-x-backend/assets/113872320/5ec5879a-56cd-4c35-973f-39828bb95c16" width="200" height="300" alt="screenshot"/>
 </div>
-
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -63,9 +63,9 @@
 
 - GPT API 를 사용한 AI 멘토링 및 기술 면접 디펜스 웹 애플리케이션입니다.
 - 멘토링 시 주제별로 특화된 전문가의 멘토링을 받을 수 있습니다.
- - 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉬운 해당 주제의 전문가 답변을 제공합니다.  
+- 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉬운 해당 주제의 전문가 답변을 제공합니다.  
 - 기술 면접 디펜스 모드는 AI 면접관의 질문을 잘 받아서 스코어를 올리는 모드입니다.
- - 디펜스 모드 클리어시 피드백이 제공됩니다.  
+- 디펜스 모드 클리어시 피드백이 제공됩니다.  
 
 <!-- Color Reference -->
 ### :art: Color Reference
