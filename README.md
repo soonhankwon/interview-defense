@@ -40,6 +40,9 @@
     <li><a href="https://aws.amazon.com/ko/corretto/">Java 17 Amazon Corretto</a></li>
     <li><a href="https://spring.io/">SpringBoot 2.7.15</a></li>
     <li><a href="https://spring.io/projects/spring-data-jpa">Spring Data Jpa</a></li>
+    <li><a href="https://spring.io/projects/spring-security">Spring Security 5.7.10</a></li>
+    <li><a href="https://docs.spring.io/spring-framework/reference/web/webflux.html">Spring WebFlux 5.3.29</a></li>
+    <li><a href="https://github.com/TheoKanning/openai-java">theokanning.openai-gpt3-java 0.16.0</a></li>
   </ul>
 </details>
 
