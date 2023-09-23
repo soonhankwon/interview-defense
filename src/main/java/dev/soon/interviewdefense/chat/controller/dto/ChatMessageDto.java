@@ -1,4 +1,6 @@
 package dev.soon.interviewdefense.chat.controller.dto;
 
-public record ChatMessageDto(String message) {
+import javax.validation.constraints.NotBlank;
+
+public record ChatMessageDto(@NotBlank String message) {
 }

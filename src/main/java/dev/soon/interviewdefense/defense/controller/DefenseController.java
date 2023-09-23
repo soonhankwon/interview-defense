@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,7 +68,11 @@ public class DefenseController {
     @PostMapping("/defense/{chatRoomId}")
     public String sendMessageToDefense(@PathVariable Long chatRoomId,
                                        @AuthenticationPrincipal SecurityUser securityUser,
-                                       @ModelAttribute("chatMessageDto") ChatMessageDto dto) {
+                                       @Validated @ModelAttribute("chatMessageDto") ChatMessageDto dto,
+                                       BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "redirect:/chat/defense/{chatRoomId}";
+        }
         Chat chat = chatService.saveUserMessage(chatRoomId, securityUser, dto);
         String response = chatService.generateDefensePrompt(chat, securityUser, dto);
         chatService.saveAIMessage(chatRoomId, securityUser, response);
