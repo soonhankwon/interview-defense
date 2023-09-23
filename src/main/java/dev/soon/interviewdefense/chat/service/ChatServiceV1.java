@@ -96,16 +96,22 @@ public class ChatServiceV1 implements ChatService {
 
     @Override
     public String generatePrompt(Chat chat, ChatMessageDto dto) {
+        String topic;
+        if(chat.isTopicDefault()) {
+            topic = "컴퓨터 프로그래밍";
+        } else {
+            topic = chat.getTopic().getValue();
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("당신은 답변을 명료하고 정확하게 하는 ")
-                .append(chat.getTopic().getValue())
-                .append("전문가입니다.");
+                .append(topic)
+                .append(" 전문가입니다.");
         String promptRole = sb.toString();
         log.info("prompt role={}", promptRole);
         sb.setLength(0);
         sb.append(dto.message())
                 .append("답변은 한국어로 해주세요.")
-                .append("답변에 대한 신뢰도 점수를 0~100 사이로 해주세요.")
+                .append("답변에 대한 신뢰도 점수를 0~100 사이로 표시해주세요.")
                 .append("복잡한 내용이 있다면 초심자가 이해가능하도록 방법을 사용해서 설명해주세요.");
         String promptUser = sb.toString();
         log.info("prompt user={}", promptUser);

@@ -2,27 +2,26 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/background.css}" rel="stylesheet">
     <style>
-        .navbar-avatar {
-            display: flex;
-            float: right;
+        h4 {
+            color: #39FF14;
+            font-family: 'Press Start 2P', cursive;
         }
 
-        .avatar-image {
-            width: 40px; /* 원하는 이미지 너비 조정 */
-            height: 40px; /* 원하는 이미지 높이 조정 */
-            border-radius: 50%; /* 동그라미 모양으로 만듭니다. */
-            margin-right: 10px; /* 이미지와 닉네임 사이 간격 조정 */
+        tr {
+            color: #f0f0f0;
         }
-
-        /* 네비게이션 바의 스타일을 기존과 동일하게 유지합니다. */
-        .navbar {
-            background-color: #fff;
+        .retro-description {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 18px;
+            color: #39FF14;
+            margin-top: 10px;
         }
-
-        .navbar-brand {
-            color: #333;
+        .col {
+            font-family: 'Press Start 2P', cursive;
         }
     </style>
 </head>
@@ -38,11 +37,15 @@
     </div>
 </nav>
 
+<div class="black-box">
 <div class="container" style="max-width: 600px">
     <!-- 나머지 내용을 이어서 추가할 수 있습니다. -->
     <div class="py-5 text-center">
-        <h2>TECH INTERVIEW DEFENSE</h2>
+            <h2 class="retro-description">
+                An AI Mentoring and Technical Interview Question Defense Game
+            </h2>
     </div>
+
     <h4>MY CHAT ROOM</h4>
     <table class="table">
         <thead>
@@ -60,12 +63,16 @@
             <td th:text="${#temporals.format(chat.createAt,'yyyy-MM-dd HH:mm')}">시작일</td>
             <td th:text="${chat.mode}">모드</td>
             <td>
-                <a th:if="${chat.mode == T(dev.soon.interviewdefense.chat.domain.ChatMode).MENTOR}" th:href="@{/chat/{chatId}(chatId=${chat.id})}" class="btn btn-primary btn-sm" role="button">입장</a>
-                <a th:if="${chat.mode == T(dev.soon.interviewdefense.chat.domain.ChatMode).DEFENSE}" th:href="@{/chat/defense/{chatId}(chatId=${chat.id})}" class="btn btn-primary btn-sm" role="button">입장</a>
+                <a th:if="${chat.mode == T(dev.soon.interviewdefense.chat.domain.ChatMode).MENTOR}"
+                   th:href="@{/chat/{chatId}(chatId=${chat.id})}" class="btn btn-primary btn-sm" role="button">입장</a>
+                <a th:if="${chat.mode == T(dev.soon.interviewdefense.chat.domain.ChatMode).DEFENSE}"
+                   th:href="@{/chat/defense/{chatId}(chatId=${chat.id})}" class="btn btn-primary btn-sm" role="button">입장</a>
             </td>
             <td>
                 <form th:action="@{/chat/{chatId}/delete(chatId=${chat.id})}" method="post">
-                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('채팅을 삭제하시겠습니까?')">DELETE</button>
+                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('채팅을 삭제하시겠습니까?')">
+                        DELETE
+                    </button>
                 </form>
             </td>
         </tr>
@@ -73,11 +80,13 @@
     </table>
     <div class="row">
         <div class="col">
-            <a th:href="@{/chat/create}" class="w-100 btn btn-primary btn-lg" th:text="#{button.start.mentoring}">MENTORING START</a>
+            <a th:href="@{/chat/create}" class="w-100 btn btn-primary btn-lg" th:text="#{button.start.mentoring}">MENTORING
+                START</a>
         </div>
 
         <div class="col">
-            <a th:href="@{/chat/defense/create}" class="w-100 btn btn-success btn-lg" th:text="#{button.start.defense}">DEFENSE START</a>
+            <a th:href="@{/chat/defense/create}" class="w-100 btn btn-success btn-lg" th:text="#{button.start.defense}">DEFENSE
+                START</a>
         </div>
     </div>
 
@@ -102,11 +111,13 @@
             <td th:text="${#temporals.format(r.createAt,'yyyy-MM-dd HH:mm')}">시작일</td>
             <td th:text="${r.user.nickname}">Nickname</td>
             <td>
-                <a th:href="@{/chat/defense/{chatId}(chatId=${r.id})}" class="btn btn-primary btn-sm" role="button">보기</a>
+                <a th:href="@{/chat/defense/{chatId}(chatId=${r.id})}" class="btn btn-primary btn-sm"
+                   role="button">보기</a>
             </td>
         </tr>
         </tbody>
     </table>
 </div> <!-- /container -->
+</div>
 </body>
 </html>

@@ -2,9 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="../css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/background.css}" rel="stylesheet">
     <style>
+        .py-5 {
+            font-family: 'Press Start 2P', cursive;
+            color: #39FF14;
+        }
+
+        .col {
+            font-family: 'Press Start 2P', cursive;
+            color: #39FF14;
+        }
+
         .container {
             max-width: 560px;
         }
@@ -13,12 +23,25 @@
             border-color: #dc3545;
             color: #dc3545;
         }
+        h4 {
+            font-family: 'Press Start 2P', cursive;
+            color: #39FF14;
+        }
+        li {
+            color: seashell;
+        }
+        p {
+            color: seashell;
+        }
+        hr {
+            color: #39FF14;
+        }
     </style>
 </head>
 <body>
 
+<div class="black-box-myPage">
 <div class="container">
-
     <div class="py-5 text-center">
         <h2 th:text="#{page.chatRoom.defense}">디펜스 설정</h2>
     </div>
@@ -28,8 +51,8 @@
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지</p>
         </div>
-        <h4>디펜스는 기본적으로 프로필에 등록된 정보를 바탕으로 진행됩니다.</h4>
-        <h4>메인 기술을 선택하면 해당 질문위주로 디펜스가 진행됩니다.</h4>
+        <li>디펜스는 기본적으로 프로필에 등록된 정보를 바탕으로 진행됩니다.</li>
+        <li>메인 기술을 선택하면 해당 질문위주로 디펜스가 진행됩니다.</li>
         <hr class="my-4">
         <div class="row">
             <div class="col-md-6">
@@ -79,5 +102,6 @@
         </div>
     </form>
 </div> <!-- /container -->
+</div>
 </body>
 </html>

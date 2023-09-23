@@ -2,37 +2,43 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/background.css}" rel="stylesheet">
     <style>
-        .navbar-avatar {
-            display: flex;
-            float: right;
+        .py-5 {
+            font-family: 'Press Start 2P', cursive;
+            color: #39FF14;
         }
 
-        .avatar-image {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
+        h4 {
+            font-family: 'Press Start 2P', cursive;
+            color: #39FF14;
         }
-
-        .navbar {
-            background-color: #fff;
+        p {
+            color: seashell;
         }
-
-        .navbar-brand {
-            color: #333;
+        li {
+            color: seashell;
         }
-
+        hr {
+            color: #39FF14;
+        }
         .bi-dash-circle {
             cursor: pointer;
+        }
+        .col {
+            font-family: 'Press Start 2P', cursive;
+        }
+        .btn-primary {
+            font-family: 'Press Start 2P', cursive;
         }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container" style="max-width: 600px">
-        <a class="navbar-brand" href="#">TECH INTERVIEW DEFENSE</a>
+        <a class="navbar-brand" href="/">TECH INTERVIEW DEFENSE</a>
         <div class="navbar-avatar">
             <a href="/myPage">
                 <img th:src="${user.imageUrl}" alt="프로필 사진" class="avatar-image">
@@ -41,6 +47,7 @@
     </div>
 </nav>
 
+<div class="black-box-myPage">
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
         <h2>My Page Update</h2>
@@ -127,6 +134,10 @@
         </div>
     </form>
 </div> <!-- /container -->
+</div>
+</body>
+</html>
+
 <script>
     function addLanguage() {
         const selectElement = document.getElementById("language-select");
@@ -232,5 +243,3 @@
             });
     }
 </script>
-</body>
-</html>

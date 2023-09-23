@@ -2,9 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="../css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/background.css}" rel="stylesheet">
     <style>
+        .col {
+            font-family: 'Press Start 2P', cursive;
+        }
+        .py-5 {
+            color: #39FF14;
+            font-family: 'Press Start 2P', cursive;
+        }
         .container {
             max-width: 560px;
         }
@@ -12,16 +19,27 @@
             border-color: #dc3545;
             color: #dc3545;
         }
+        h4 {
+            font-family: 'Press Start 2P', cursive;
+            color: #39FF14;
+        }
+        li {
+            color: seashell;
+        }
+        hr {
+            color: #39FF14;
+        }
     </style>
 </head>
 <body>
 
+<div class="black-box-myPage">
 <div class="container">
-
     <div class="py-5 text-center">
         <h2 th:text="#{page.chatRoom.mode}">멘토링 모드 설정</h2>
     </div>
-
+    <li>선택한 주제의 전문가에게 멘토링을 받을수 있습니다.</li>
+    <li>기본 주제를 선택하면 일반적인 프로그래밍 전문가에게 멘토링을 받습니다.</li>
     <form action="loginHome.html" th:action th:object="${chat}" method="post">
 
         <div th:if="${#fields.hasGlobalErrors()}">
@@ -50,7 +68,7 @@
         </div>
 
     </form>
-
 </div> <!-- /container -->
+</div>
 </body>
 </html>

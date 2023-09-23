@@ -1,0 +1,16 @@
+.black-box {
+    background-color: #000; /* 검은색 배경 */
+    padding: 20px; /* 상자 안의 내용과의 여백 설정 */
+    display: flex;
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    min-height: 100vh; /* 최소 화면 높이만큼 상자 높이 설정 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+.black-box-myPage {
+    background-color: #000; /* 검은색 배경 */
+    padding: 20px; /* 상자 안의 내용과의 여백 설정 */
+    display: flex;
+    min-height: 100vh; /* 최소 화면 높이만큼 상자 높이 설정 */
+}

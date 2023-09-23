@@ -2,27 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/background.css}" rel="stylesheet">
     <style>
-        .navbar-avatar {
-            display: flex;
-            float: right;
+        .py-5 {
+            color: #39FF14;
+            font-family: 'Press Start 2P', cursive;
         }
-
-        .avatar-image {
-            width: 40px; /* 원하는 이미지 너비 조정 */
-            height: 40px; /* 원하는 이미지 높이 조정 */
-            border-radius: 50%; /* 동그라미 모양으로 만듭니다. */
-            margin-right: 10px; /* 이미지와 닉네임 사이 간격 조정 */
+        .col {
+            color: #39FF14;
+            font-family: 'Press Start 2P', cursive;
         }
-
-        /* 네비게이션 바의 스타일을 기존과 동일하게 유지합니다. */
-        .navbar {
-            background-color: #fff;
+        .spinner-border {
+            color: #39FF14;
         }
-
-        .navbar-brand {
-            color: #333;
+        hr {
+            color: #39FF14;
+        }
+        h4 {
+            color: #39FF14;
+            font-family: 'Press Start 2P', cursive;
+        }
+        span {
+            color: seashell;
+        }
+        .score-board {
+            color : #39FF14;
         }
     </style>
 </head>
@@ -38,6 +44,7 @@
     </div>
 </nav>
 
+<div class="black-box-myPage">
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
         <h2>TECH INTERVIEW DEFENSE</h2>
@@ -63,7 +70,7 @@
     <form action="chatRoom.html" th:action th:object="${chatMessageDto}" method="post" onsubmit="sendMessage()">
         <div class="row" th:if="${chat.aiQuestionsMaxNumber > 0}">
             <div class="col-md-8">
-                <h4>SCORE: <span th:text="${chat.defenseScore}"></span></h4>
+                <h4>SCORE: <span class="score-board" th:text="${chat.defenseScore}"></span></h4>
                 <h4>Chat Message:</h4>
                 <label>
                     <textarea type="text" id="chatMessage" th:field="*{message}" rows="4"
@@ -91,6 +98,7 @@
         </div>
     </form>
 </div> <!-- /container -->
+</div>
 </body>
 </html>
 
