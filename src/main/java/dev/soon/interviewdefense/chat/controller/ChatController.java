@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,7 +56,11 @@ public class ChatController {
     @PostMapping("/{chatRoomId}")
     public String sendMessage(@PathVariable Long chatRoomId,
                               @AuthenticationPrincipal SecurityUser securityUser,
-                              @ModelAttribute("chatMessageDto") ChatMessageDto dto) {
+                              @Validated @ModelAttribute("chatMessageDto") ChatMessageDto dto,
+                              BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "redirect:/chat/{chatRoomId}";
+        }
         Chat chat = chatService.saveUserMessage(chatRoomId, securityUser, dto);
         String response = chatService.generatePrompt(chat, dto);
         chatService.saveAIMessage(chatRoomId, securityUser, response);
