@@ -27,7 +27,7 @@ import java.util.List;
 @RequestMapping("/chat")
 public class DefenseController {
 
-    private final ChatService chatService;
+    private final ChatService chatServiceV2;
     private final UserService userService;
 
     @GetMapping("/defense/create")
@@ -46,17 +46,17 @@ public class DefenseController {
     @PostMapping("/defense/create")
     public String createDefenseChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
                                         @ModelAttribute("dto") DefenseChatRoomReqDto dto) {
-        Long chatRoomId = chatService.createDefenseChatRoom(securityUser, dto);
-        String res = chatService.initDefensePrompt(securityUser, dto);
-        chatService.saveAIMessage(chatRoomId, securityUser, res);
+        Long chatRoomId = chatServiceV2.createDefenseChatRoom(securityUser, dto);
+        String res = chatServiceV2.initDefensePrompt(securityUser, dto);
+        chatServiceV2.saveAIMessage(chatRoomId, securityUser, res);
         return "redirect:/chat/defense/" + chatRoomId;
     }
 
     @GetMapping("/defense/{chatRoomId}")
     public String getDefenseChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
                                      @PathVariable Long chatRoomId, Model model) {
-        Chat chatRoom = chatService.getChatRoom(securityUser, chatRoomId);
-        List<ChatMessage> chatMessagesInChatRoom = chatService.getChatRoomMessages(chatRoom);
+        Chat chatRoom = chatServiceV2.getChatRoom(securityUser, chatRoomId);
+        List<ChatMessage> chatMessagesInChatRoom = chatServiceV2.getChatRoomMessages(chatRoom);
         model.addAttribute("chatMessages", chatMessagesInChatRoom);
         model.addAttribute("chat", chatRoom);
         User loginUserInfo = userService.getLoginUserInfo(securityUser);
@@ -73,9 +73,9 @@ public class DefenseController {
         if(bindingResult.hasErrors()) {
             return "redirect:/chat/defense/{chatRoomId}";
         }
-        Chat chat = chatService.saveUserMessage(chatRoomId, securityUser, dto);
-        String response = chatService.generateDefensePrompt(chat, securityUser, dto);
-        chatService.saveAIMessage(chatRoomId, securityUser, response);
+        Chat chat = chatServiceV2.saveUserMessage(chatRoomId, securityUser, dto);
+        String response = chatServiceV2.generateDefensePrompt(chat, securityUser, dto);
+        chatServiceV2.saveAIMessage(chatRoomId, securityUser, response);
         return "redirect:/chat/defense/{chatRoomId}";
     }
 }
