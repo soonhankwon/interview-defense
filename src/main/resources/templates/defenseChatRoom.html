@@ -57,7 +57,7 @@
                 <img th:if="${chatMessage.sender == T(dev.soon.interviewdefense.chat.domain.ChatSender).USER}"
                      th:src="${user.imageUrl}" alt="프로필 사진" class="avatar-image">
                 <img th:if="${chatMessage.sender == T(dev.soon.interviewdefense.chat.domain.ChatSender).AI}"
-                     th:src="@{/image/btnG_아이콘원형.png}" alt="프로필 사진" class="avatar-image">
+                     th:src="@{/image/interview-defense-logo2.png}" alt="프로필 사진" class="avatar-image">
                 <span th:text="${chatMessage.message}" style="white-space: pre-line;">메세지</span>
             </td>
         </tr>
