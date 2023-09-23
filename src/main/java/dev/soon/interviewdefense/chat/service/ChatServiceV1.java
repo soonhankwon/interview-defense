@@ -182,15 +182,15 @@ public class ChatServiceV1 implements ChatService {
                 .append(userTechs)
                 .append(" 입니다.")
                 .append(DEFENSE_ROLE_QUESTION_OPTION)
-                .append(DEFENSE_OPTION_ROLE_SCORE)
+//                .append(DEFENSE_OPTION_ROLE_SCORE)
                 .append(DEFENSE_OPTION_SCORE)
                 .append(DEFENSE_OPTION_SCORE_UNNATURAL)
                 .append(DEFENSE_OPTION_QUESTION_FORBIDDEN_A)
                 .append(DEFENSE_OPTION_SCORE_SHORT)
                 .append(DEFENSE_OPTION_SCORE_DONT_KNOW)
                 .append(DEFENSE_OPTION_SCORE_GREAT)
-                .append(DEFENSE_OPTION_SCORE_BAD)
-                .append(DEFENSE_OPTION_QUESTION_FORBIDDEN);
+                .append(DEFENSE_OPTION_SCORE_BAD);
+//                .append(DEFENSE_OPTION_QUESTION_FORBIDDEN);
         String rolePrompt = sb.toString();
 
         ChatCompletionRequest request = requestOpenAI(new com.theokanning.openai.completion.chat.ChatMessage("system", rolePrompt), dto.message());
