@@ -6,21 +6,7 @@
   * [Tech Stack](#space_invader-tech-stack)
   * [Features](#dart-features)
   * [Color Reference](#art-color-reference)
-  * [Environment Variables](#key-environment-variables)
-- [Getting Started](#toolbox-getting-started)
-  * [Prerequisites](#bangbang-prerequisites)
-  * [Installation](#gear-installation)
-  * [Running Tests](#test_tube-running-tests)
-  * [Run Locally](#running-run-locally)
-  * [Deployment](#triangular_flag_on_post-deployment)
-- [Usage](#eyes-usage)
-- [Roadmap](#compass-roadmap)
-- [Contributing](#wave-contributing)
-  * [Code of Conduct](#scroll-code-of-conduct)
-- [FAQ](#grey_question-faq)
-- [License](#warning-license)
 - [Contact](#handshake-contact)
-- [Acknowledgements](#gem-acknowledgements)
 
 <!-- About the Project -->
 ## :star2: About the Project
@@ -50,6 +36,7 @@
   <ul>
     <li><a href="https://aws.amazon.com/ko/corretto/">Java 17 Amazon Corretto</a></li>
     <li><a href="https://spring.io/">SpringBoot 2.7.15</a></li>
+    <li><a href="https://spring.io/projects/spring-data-jpa">Spring Data Jpa</a></li>
   </ul>
 </details>
 
@@ -63,16 +50,21 @@
 <details>
 <summary>DevOps</summary>
   <ul>
+    <li><a href="https://www.ncloud.com/product/database/cloudDbMysql">Naver Cloud DB for MySQL</a></li>
+    <li><a href="https://www.ncloud.com/product/compute/server">Naver Cloud Compute Server</a></li>
     <li><a href="https://www.docker.com/">Docker</a></li>
+    <li><a href="https://docs.github.com/ko/actions">Github Actions</a></li>
   </ul>
 </details>
 
 <!-- Features -->
 ### :dart: Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+- GPT API 를 사용한 AI 멘토링 및 기술 면접 디펜스 웹 애플리케이션입니다.
+- 멘토링 시 주제별로 특화된 전문가의 멘토링을 받을 수 있습니다.
+ - 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉬운 해당 주제의 전문가 답변을 제공합니다.  
+- 기술 면접 디펜스 모드는 AI 면접관의 질문을 잘 받아서 스코어를 올리는 모드입니다.
+ - 디펜스 모드 클리어시 피드백이 제공됩니다.  
 
 <!-- Color Reference -->
 ### :art: Color Reference
@@ -80,160 +72,10 @@
 | Color             | Hex                                                                |
 | ----------------- | ------------------------------------------------------------------ |
 | Primary Color | ![#222831](https://via.placeholder.com/10/222831?text=+) #222831 |
-| Secondary Color | ![#393E46](https://via.placeholder.com/10/393E46?text=+) #393E46 |
-| Accent Color | ![#00ADB5](https://via.placeholder.com/10/00ADB5?text=+) #00ADB5 |
-| Text Color | ![#EEEEEE](https://via.placeholder.com/10/EEEEEE?text=+) #EEEEEE |
-
-
-<!-- Env Variables -->
-### :key: Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`API_KEY`
-
-`ANOTHER_API_KEY`
-
-<!-- Getting Started -->
-## 	:toolbox: Getting Started
-
-<!-- Prerequisites -->
-### :bangbang: Prerequisites
-
-This project uses Yarn as package manager
-
-```bash
- npm install --global yarn
-```
-
-<!-- Installation -->
-### :gear: Installation
-
-Install my-project with npm
-
-```bash
-  yarn install my-project
-  cd my-project
-```
-   
-<!-- Running Tests -->
-### :test_tube: Running Tests
-
-To run tests, run the following command
-
-```bash
-  yarn test test
-```
-
-<!-- Run Locally -->
-### :running: Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/Louis3797/awesome-readme-template.git
-```
-
-Go to the project directory
-
-```bash
-  cd my-project
-```
-
-Install dependencies
-
-```bash
-  yarn install
-```
-
-Start the server
-
-```bash
-  yarn start
-```
-
-
-<!-- Deployment -->
-### :triangular_flag_on_post: Deployment
-
-To deploy this project run
-
-```bash
-  yarn deploy
-```
-
-
-<!-- Usage -->
-## :eyes: Usage
-
-Use this space to tell a little more about your project and how it can be used. Show additional screenshots, code samples, demos or link to other resources.
-
-
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
-```
-
-<!-- Roadmap -->
-## :compass: Roadmap
-
-* [x] Todo 1
-* [ ] Todo 2
-
-
-<!-- Contributing -->
-## :wave: Contributing
-
-<a href="https://github.com/Louis3797/awesome-readme-template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Louis3797/awesome-readme-template" />
-</a>
-
-
-Contributions are always welcome!
-
-See `contributing.md` for ways to get started.
-
-
-<!-- Code of Conduct -->
-### :scroll: Code of Conduct
-
-Please read the [Code of Conduct](https://github.com/Louis3797/awesome-readme-template/blob/master/CODE_OF_CONDUCT.md)
-
-<!-- FAQ -->
-## :grey_question: FAQ
-
-- Question 1
-
-  + Answer 1
-
-- Question 2
-
-  + Answer 2
-
-
-<!-- License -->
-## :warning: License
-
-Distributed under the no License. See LICENSE.txt for more information.
-
+| Accent Color | ![#39FF14](https://via.placeholder.com/10/39FF14?text=+) #39FF14 |
+| Text Color | ![#fff5ee](https://via.placeholder.com/10/fff5ee?text=+) #fff5ee |
 
 <!-- Contact -->
 ## :handshake: Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/Louis3797/awesome-readme-template](https://github.com/Louis3797/awesome-readme-template)
-
-
-<!-- Acknowledgments -->
-## :gem: Acknowledgements
-
-Use this section to mention useful resources and libraries that you have used in your projects.
-
- - [Shields.io](https://shields.io/)
- - [Awesome README](https://github.com/matiassingers/awesome-readme)
- - [Emoji Cheat Sheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#travel--places)
- - [Readme Template](https://github.com/othneildrew/Best-README-Template)
+Email - soonable@gmail.com
