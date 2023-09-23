@@ -26,12 +26,12 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     private ChatSender sender;
 
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     public ChatMessage(String message, Chat chat, ChatSender sender) {
         this.message = message;
         this.chat = chat;
         this.sender = sender;
-        this.createAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 }

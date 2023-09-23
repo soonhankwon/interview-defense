@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +30,7 @@ import static dev.soon.interviewdefense.chat.util.PromptGenerator.*;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ChatServiceV1 implements ChatService {
+public class ChatServiceV2 implements ChatService {
 
     private static final String PATTERN = "점수: (\\d+)";
     private static final Pattern SCORE_PATTERN = Pattern.compile(PATTERN);
@@ -141,7 +142,7 @@ public class ChatServiceV1 implements ChatService {
                 .append(topic)
                 .append(userLanguages)
                 .append(userTechs)
-                .append(user.getPosition())
+                .append(user.getPosition().getValue())
                 .append(INIT_DEFENSE_ROLE)
                 .append(INIT_DEFENSE_ROLE_KOREAN)
                 .append(INIT_DEFENSE_LIMITED);
@@ -182,18 +183,18 @@ public class ChatServiceV1 implements ChatService {
                 .append(userTechs)
                 .append(" 입니다.")
                 .append(DEFENSE_ROLE_QUESTION_OPTION)
-//                .append(DEFENSE_OPTION_ROLE_SCORE)
-                .append(DEFENSE_OPTION_SCORE)
-                .append(DEFENSE_OPTION_SCORE_UNNATURAL)
                 .append(DEFENSE_OPTION_QUESTION_FORBIDDEN_A)
-                .append(DEFENSE_OPTION_SCORE_SHORT)
-                .append(DEFENSE_OPTION_SCORE_DONT_KNOW)
-                .append(DEFENSE_OPTION_SCORE_GREAT)
-                .append(DEFENSE_OPTION_SCORE_BAD);
-//                .append(DEFENSE_OPTION_QUESTION_FORBIDDEN);
+                .append(DEFENSE_OPTION_SCORE)
+                .append(DEFENSE_OPTION_SCORE_UNNATURAL);
         String rolePrompt = sb.toString();
 
-        ChatCompletionRequest request = requestOpenAI(new com.theokanning.openai.completion.chat.ChatMessage("system", rolePrompt), dto.message());
+        Optional<ChatMessage> optionalChatMessageByAIDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat);
+        String userPrompt;
+        userPrompt = optionalChatMessageByAIDesc
+                .map(chatMessage -> "당신이 질문한 내용인 [" + chatMessage.getMessage() + "]에 대한 저의 답변은 " + dto.message() + " 기술면접을 계속 진행해주시고, 연관된 질문을 1개만 해주세요.")
+                .orElse("");
+
+        ChatCompletionRequest request = requestOpenAI(new com.theokanning.openai.completion.chat.ChatMessage("system", rolePrompt), userPrompt);
         ChatCompletionResult chatCompletion = openAiService.createChatCompletion(request);
         chat.decreaseAIQuestionMaxNumber();
         if (chat.isDefenseEnd()) {
