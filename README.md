@@ -40,8 +40,8 @@
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href="https://www.typescriptlang.org/">Thymeleaf</a></li>
-    <li><a href="https://nextjs.org/">Javascript</a></li>
+    <li><a href="https://www.thymeleaf.org/">Thymeleaf</a></li>
+    <li><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript">Javascript</a></li>
   </ul>
 </details>
 
