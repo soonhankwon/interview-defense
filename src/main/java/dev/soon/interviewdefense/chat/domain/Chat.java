@@ -75,8 +75,4 @@ public class Chat {
     public void increaseScore(int score) {
         this.defenseScore += score;
     }
-
-    public boolean isTopicDefault() {
-        return this.topic == ChatTopic.DEFAULT;
-    }
 }

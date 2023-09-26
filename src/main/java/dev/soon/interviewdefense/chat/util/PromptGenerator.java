@@ -21,8 +21,8 @@ public final class PromptGenerator {
 //    public static final String DEFENSE_OPTION_ROLE_SCORE = "답변의 논리성 및 정확도를 간단히 언급해주세요.";
     public static final String DEFENSE_OPTION_SCORE_UNNATURAL = "면접 상황에 부자연스러운 답변을 받는다면 다른 질문을 해주세요. 이경우 점수는0 입니다.";
     public static final String DEFENSE_OPTION_SCORE_SHORT = "단답형 답변에 대해서는 추가질문을 해주세요. 이경우 점수는50 입니다.";
-    public static final String DEFENSE_OPTION_SCORE_DONT_KNOW = "모르겠다는 답변에 대해서는 다른 질문을 해주세요. 이경우 점수는30 입니다.";
-    public static final String DEFENSE_OPTION_SCORE_GREAT = "점수가 80이상이라면 다른 주제의 질문을 해주세요.";
+    public static final String DEFENSE_OPTION_SCORE_DONT_KNOW = "모르겠다는 답변에 다른 질문을 하세요. 이경우 점수는30 입니다.";
+    public static final String DEFENSE_OPTION_SCORE_GREAT = "점수가 80이상이라면";
     public static final String DEFENSE_OPTION_SCORE_BAD = "점수가 80미만이라면 추가질문을 해주세요.";
 //    public static final String DEFENSE_OPTION_QUESTION_FORBIDDEN = "질문은 한번에 꼭 한가지만 해야합니다.";
     public static final String DEFENSE_OPTION_QUESTION_FORBIDDEN_A = "사실과 다른 질문은 절대하지 마세요. 이럴경우 다른 질문으로 넘어가세요.";
