@@ -5,6 +5,7 @@ import dev.soon.interviewdefense.chat.controller.dto.DefenseChatRoomReqDto;
 import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.service.ChatService;
+import dev.soon.interviewdefense.defense.service.DefenseService;
 import dev.soon.interviewdefense.security.SecurityUser;
 import dev.soon.interviewdefense.user.domain.Language;
 import dev.soon.interviewdefense.user.domain.Tech;
@@ -29,6 +30,7 @@ public class DefenseController {
 
     private final ChatService chatServiceV2;
     private final UserService userService;
+    private final DefenseService defenseService;
 
     @GetMapping("/defense/create")
     public String defenseChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
@@ -46,8 +48,8 @@ public class DefenseController {
     @PostMapping("/defense/create")
     public String createDefenseChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
                                         @ModelAttribute("dto") DefenseChatRoomReqDto dto) {
-        Long chatRoomId = chatServiceV2.createDefenseChatRoom(securityUser, dto);
-        String res = chatServiceV2.initDefensePrompt(securityUser, dto);
+        Long chatRoomId = defenseService.createDefenseChatRoom(securityUser, dto);
+        String res = defenseService.initDefensePrompt(securityUser, dto);
         chatServiceV2.saveAIMessage(chatRoomId, securityUser, res);
         return "redirect:/chat/defense/" + chatRoomId;
     }
@@ -74,7 +76,7 @@ public class DefenseController {
             return "redirect:/chat/defense/{chatRoomId}";
         }
         Chat chat = chatServiceV2.saveUserMessage(chatRoomId, securityUser, dto);
-        String response = chatServiceV2.generateDefensePrompt(chat, securityUser, dto);
+        String response = defenseService.generateDefensePrompt(chat, securityUser, dto);
         chatServiceV2.saveAIMessage(chatRoomId, securityUser, response);
         return "redirect:/chat/defense/{chatRoomId}";
     }
