@@ -6,24 +6,32 @@
     <link th:href="@{/css/navbar.css}" rel="stylesheet">
     <link th:href="@{/css/background.css}" rel="stylesheet">
     <style>
+        .col {
+            font-family: 'Press Start 2P', cursive;
+        }
+
         .py-5 {
             color: #39FF14;
             font-family: 'Press Start 2P', cursive;
         }
-        .col {
-            color: #39FF14;
+
+        .container {
+            max-width: 560px;
+        }
+
+        h4 {
             font-family: 'Press Start 2P', cursive;
-        }
-        .spinner-border {
             color: #39FF14;
         }
+
+        li {
+            color: seashell;
+        }
+
         hr {
             color: #39FF14;
         }
-        h4 {
-            color: #39FF14;
-            font-family: 'Press Start 2P', cursive;
-        }
+
         span {
             color: seashell;
         }
@@ -40,46 +48,44 @@
         </div>
     </div>
 </nav>
-
 <div class="black-box-myPage">
-<div class="container" style="max-width: 600px">
-    <div class="py-5 text-center">
-        <h2>TECH INTERVIEW DEFENSE</h2>
-    </div>
-    <hr class="my-4">
-    <table class="table">
-        <tbody>
-        <tr th:each="chatMessage : ${chatMessages}">
-            <td>
-                <img th:if="${chatMessage.sender == T(dev.soon.interviewdefense.chat.domain.ChatSender).USER}"
-                     th:src="${user.imageUrl}" alt="프로필 사진" class="avatar-image">
-                <img th:if="${chatMessage.sender == T(dev.soon.interviewdefense.chat.domain.ChatSender).AI}"
-                     th:src="@{/image/interview-defense-logo2.png}" alt="프로필 사진" class="avatar-image">
-                <span th:text="${chatMessage.message}" style="white-space: pre-line;">메세지</span>
-            </td>
-        </tr>
-        <tr class="message-separator">
-            <td></td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="spinner-border" role="status" id="response-spinner" style="display: none"></div>
-    <form action="chatRoom.html" th:action th:object="${chatMessageDto}" method="post" onsubmit="sendMessage()">
+    <div class="container" style="max-width: 600px">
+        <div class="py-5 text-center">
+            <h2>TECH INTERVIEW DEFENSE</h2>
+        </div>
+        <hr class="my-4">
+        <table class="table">
+            <tbody>
+            <tr th:each="chatMessage : ${chatMessages}">
+                <td>
+                    <img th:if="${chatMessage.sender == T(dev.soon.interviewdefense.chat.domain.ChatSender).USER}"
+                         th:src="${user.imageUrl}" alt="프로필 사진" class="avatar-image">
+                    <img th:if="${chatMessage.sender == T(dev.soon.interviewdefense.chat.domain.ChatSender).AI}"
+                         th:src="@{/image/interview-defense-logo2.png}" alt="프로필 사진" class="avatar-image">
+                    <span th:text="${chatMessage.message}" style="white-space: pre-line;"></span>
+                </td>
+            </tr>
+            <tr class="message-separator">
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md" id="chat-output" style="white-space: pre-line;"></div>
+        <hr class="my-4">
         <div class="row">
             <div class="col-md-8">
                 <h4>Chat Message:</h4>
                 <label>
-                    <textarea type="text" id="chatMessage" th:field="*{message}" rows="4"
-                              class="form-control" placeholder="question please!"
-                              style="width: 580px;">
-                    </textarea>
+                    <textarea type="text" id="user-input" rows="4" class="form-control"
+                              placeholder="question please!" style="width: 580px;"></textarea>
                 </label>
             </div>
         </div>
-        <hr class="my-4">
         <div class="row">
             <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.send}" id="send-button">제출하기</button>
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.send}" id="send-button">
+                    제출하기
+                </button>
             </div>
             <div class="col">
                 <div class="col">
@@ -91,42 +97,37 @@
                 </div>
             </div>
         </div>
-    </form>
-</div> <!-- /container -->
+    </div>
 </div>
 </body>
 </html>
 
+<!-- WebSocket 연결 및 메시지 수신 스크립트 -->
 <script>
-    function sendMessage() {
-        // 응답 스피너 표시
-        const spinner = document.getElementById("response-spinner");
-        spinner.style.display = "flex";
+    const chatOutput = document.getElementById('chat-output');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const socket = new WebSocket('ws://localhost:8080/v1/chat');
 
-        // 메시지를 서버로 보내는 AJAX 요청을 만듭니다.
-        const message = document.getElementById("chatMessage").value;
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/sendMessage", true); // 서버로 메시지를 보내는 엔드포인트 설정
+    socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        chatOutput.innerHTML += `<span>${message}</span>`;
+    };
 
-        // AJAX 요청이 완료되었을 때 실행되는 콜백 함수
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                // 성공적으로 응답을 받았을 때 처리하는 코드
-                const responseArea = document.getElementById("response-spinner");
-                responseArea.innerHTML = xhr.responseText;
+    sendButton.addEventListener('click', () => {
+        const userMessage = userInput.value;
+        const currentPath = window.location.pathname;
+        const pathSegments = currentPath.split('/');
+        const chatId = pathSegments[pathSegments.length - 1] + '%flag%';
+        if (userMessage.trim() !== '') {
+            // 사용자 입력을 WebSocket 을 통해 서버로 전송
+            socket.send(chatId + userMessage);
 
-                // 몇 초 후에 응답 메시지 영역을 숨김 (예: 2초 후)
-                setTimeout(function () {
-                    responseArea.style.display = "none";
-                }, 2000); // 2초 후에 숨김
-            } else {
-                // 오류 처리
-                console.error("서버 오류: " + xhr.status);
-            }
-        };
+            // 입력한 메시지를 화면에 표시
+            chatOutput.innerHTML += `<p style="color: seashell">Q: ${userMessage}</p>`;
 
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        const requestData = JSON.stringify({message: message});
-        xhr.send(requestData);
-    }
+            // 입력 필드 초기화
+            userInput.value = '';
+        }
+    });
 </script>

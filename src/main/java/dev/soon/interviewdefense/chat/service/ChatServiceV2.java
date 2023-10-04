@@ -1,7 +1,7 @@
 package dev.soon.interviewdefense.chat.service;
 
+import com.theokanning.openai.completion.chat.ChatCompletionChunk;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
-import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.service.OpenAiService;
 import dev.soon.interviewdefense.chat.controller.dto.ChatMessageDto;
 import dev.soon.interviewdefense.chat.controller.dto.ChatRoomReqDto;
@@ -13,6 +13,7 @@ import dev.soon.interviewdefense.chat.respository.ChatRepository;
 import dev.soon.interviewdefense.security.SecurityUser;
 import dev.soon.interviewdefense.user.domain.User;
 import dev.soon.interviewdefense.user.repository.UserRepository;
+import io.reactivex.Flowable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -80,7 +81,7 @@ public class ChatServiceV2 implements ChatService {
     }
 
     @Override
-    public String generatePrompt(Chat chat, ChatMessageDto dto) {
+    public Flowable<ChatCompletionChunk> generateStreamResponse(Chat chat, String question) {
         String topic = chat.getTopic().getValue();
         String rolePrompt = MENTOR_ROLE_CHARACTER +
                 topic +
@@ -89,21 +90,17 @@ public class ChatServiceV2 implements ChatService {
                 MENTOR_OPTION_KOREAN +
                 MENTOR_OPTION_SCORE;
 
-        ChatCompletionRequest request = requestOpenAI(
-                new com.theokanning.openai.completion.chat.ChatMessage("system", rolePrompt),
-                dto.message());
-        ChatCompletionResult chatCompletion = openAiService.createChatCompletion(request);
-        return chatCompletion.getChoices().get(0).getMessage().getContent();
+        ChatCompletionRequest request = requestOpenAI(rolePrompt, question);
+        return openAiService.streamChatCompletion(request);
     }
 
-    private ChatCompletionRequest requestOpenAI(com.theokanning.openai.completion.chat.ChatMessage rolePrompt, String userPrompt) {
+    private ChatCompletionRequest requestOpenAI(String rolePrompt, String userPrompt) {
         return ChatCompletionRequest.builder()
                 .model("gpt-3.5-turbo")
-                .messages(List.of(
-                        rolePrompt,
-                        new com.theokanning.openai.completion.chat.ChatMessage("user", userPrompt)
-                ))
+                .messages(List.of(new com.theokanning.openai.completion.chat.ChatMessage("system", rolePrompt),
+                        new com.theokanning.openai.completion.chat.ChatMessage("user", userPrompt)))
                 .maxTokens(1000)
+                .stream(true)
                 .build();
     }
 
