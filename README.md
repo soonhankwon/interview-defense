@@ -86,13 +86,13 @@
 <!-- Issue -->
 ### :fountain_pen: Issues
 
-- [기술 면접 디펜스 모드에서 AI의 상황에 맞지 않는 응답 다수 발생 -> 프롬프트 엔지니어링 중 지속적인 학습방법으로 일부 개선](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
-- [멘토링 대기 Latency 약 10~15초 → GPT StreamChatCompletion 활용한 멘토링 응답 대기시간 개선](https://www.notion.so/GPT-Stream-Completion-4dd198e0fe0745eab3ca1dad284c4e67?pvs=4)
+- [기술 면접 디펜스 모드에서 AI의 상황에 맞지 않는 응답 다수 발생 → 프롬프트 엔지니어링 중 지속적인 학습방법으로 개선](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
+- [멘토링 대기 Latency 약 10~15초 → GPT StreamChatCompletion 활용한 멘토링 응답 체감 대기시간 개선](https://www.notion.so/GPT-Stream-Completion-4dd198e0fe0745eab3ca1dad284c4e67?pvs=4)
 
 <!-- Roadmap -->
 ## :compass: Roadmap
 
-* [x] 멘토링모드 OpenAPI 스트리밍 기능 활용 → 사용자 채팅 응답시간 편의성 개선
+* [x] 멘토링모드 OpenAPI 스트리밍 기능 활용
 * [ ] 디펜스모드 스트리밍 기능 활용 → 사용자 채팅 응답시간 편의성 개선 
 
 <!-- Color Reference -->
