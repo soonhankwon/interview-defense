@@ -44,6 +44,7 @@
     <li><a href="https://spring.io/">SpringBoot 2.7.15</a></li>
     <li><a href="https://spring.io/projects/spring-data-jpa">Spring Data Jpa</a></li>
     <li><a href="https://spring.io/projects/spring-security">Spring Security 5.7.10</a></li>
+    <li><a href="https://spring.io/guides/gs/messaging-stomp-websocket/">Spring WebSocket 5.3.29</a></li>
     <li><a href="https://docs.spring.io/spring-framework/reference/web/webflux.html">Spring WebFlux 5.3.29</a></li>
     <li><a href="https://github.com/TheoKanning/openai-java">theokanning.openai-gpt3-java 0.16.0</a></li>
   </ul>
@@ -75,16 +76,24 @@
 <!-- Features -->
 ### :dart: Features
 
-- OPEN AI GPT API 를 사용한 AI 멘토링 및 기술 면접 디펜스 웹 애플리케이션입니다.
+- OPEN AI API 를 사용한 AI 멘토링 및 기술 면접 디펜스 웹 애플리케이션입니다.
 - 멘토링 시 주제별 전문가의 멘토링을 받을 수 있습니다.
-- 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉽게 예시를들어 해당 주제의 전문가 답변을 제공합니다.  
+- 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉽게 예시를들어 해당 주제의 전문가 답변을 제공합니다.
+- 멘토링 모드는 현재 GPT 스트림 기능이 구현되어 있습니다.
 - 기술 면접 디펜스 모드는 AI 면접관의 질문을 잘 답변해서 스코어를 올리는 모드입니다.
 - 디펜스 모드 클리어시 피드백이 제공됩니다.
 
 <!-- Issue -->
 ### :fountain_pen: Issues
 
-- [기술 면접 디펜스 모드에서 AI의 상황에 맞지 않는 응답 다수 발생](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
+- [기술 면접 디펜스 모드에서 AI의 상황에 맞지 않는 응답 다수 발생 -> 프롬프트 엔지니어링 중 지속적인 학습방법으로 일부 개선](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
+- [멘토링 대기 Latency 약 10~15초 → GPT StreamChatCompletion 활용한 멘토링 응답 대기시간 개선](https://www.notion.so/GPT-Stream-Completion-4dd198e0fe0745eab3ca1dad284c4e67?pvs=4)
+
+<!-- Roadmap -->
+## :compass: Roadmap
+
+* [x] 멘토링모드 OpenAPI 스트리밍 기능 활용 → 사용자 채팅 응답시간 편의성 개선
+* [ ] 디펜스모드 스트리밍 기능 활용 → 사용자 채팅 응답시간 편의성 개선 
 
 <!-- Color Reference -->
 ### :art: Color Reference
@@ -94,11 +103,6 @@
 | Primary Color | ![#222831](https://via.placeholder.com/10/222831?text=+) #222831 |
 | Accent Color | ![#39FF14](https://via.placeholder.com/10/39FF14?text=+) #39FF14 |
 | Text Color | ![#fff5ee](https://via.placeholder.com/10/fff5ee?text=+) #fff5ee |
-
-<!-- Roadmap -->
-## :compass: Roadmap
-
-* [ ] OpenAPI 스트리밍 기능 활용 → 사용자 채팅 응답시간 편의성 개선
 
 <!-- Contact -->
 ## :handshake: Contact
