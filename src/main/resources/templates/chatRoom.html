@@ -107,7 +107,7 @@
     const chatOutput = document.getElementById('chat-output');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
-    const socket = new WebSocket('ws://localhost:8080/v1/chat');
+    const socket = new WebSocket('ws://27.96.134.7/v1/chat');
 
     socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
