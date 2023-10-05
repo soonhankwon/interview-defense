@@ -48,7 +48,7 @@ public class ChatServiceV2 implements ChatService {
     @Transactional(readOnly = true)
     public Chat getChatRoom(SecurityUser securityUser, Long chatRoomId) {
         return chatRepository.findById(chatRoomId)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
     }
 
     @Override
