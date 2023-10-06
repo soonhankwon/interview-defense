@@ -10,6 +10,8 @@ import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.domain.ChatSender;
 import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
+import dev.soon.interviewdefense.exception.ApiException;
+import dev.soon.interviewdefense.exception.CustomErrorCode;
 import dev.soon.interviewdefense.security.SecurityUser;
 import dev.soon.interviewdefense.user.domain.User;
 import dev.soon.interviewdefense.user.repository.UserRepository;
@@ -38,7 +40,7 @@ public class ChatServiceV2 implements ChatService {
     @Transactional
     public Long createChatRoom(SecurityUser securityUser, ChatRoomReqDto dto) {
         User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
         Chat chat = new Chat(dto, user);
         chatRepository.save(chat);
         return chat.getId();
@@ -48,7 +50,7 @@ public class ChatServiceV2 implements ChatService {
     @Transactional(readOnly = true)
     public Chat getChatRoom(SecurityUser securityUser, Long chatRoomId) {
         return chatRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_CHATROOM_IN_DB));
     }
 
     @Override
@@ -61,9 +63,9 @@ public class ChatServiceV2 implements ChatService {
     @Transactional
     public Chat saveUserMessage(Long chatRoomId, SecurityUser securityUser, ChatMessageDto dto) {
         User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
         Chat chat = chatRepository.findChatByIdAndUser(chatRoomId, user)
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_MATCHES_CHAT_ID_AND_USER));
         ChatMessage chatMessage = new ChatMessage(dto.message(), chat, ChatSender.USER);
         chat.saveMessage(chatMessage);
         return chat;
@@ -73,9 +75,9 @@ public class ChatServiceV2 implements ChatService {
     @Transactional
     public void saveAIMessage(Long chatRoomId, SecurityUser securityUser, String aiMessage) {
         User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
         Chat chat = chatRepository.findChatByIdAndUser(chatRoomId, user)
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_MATCHES_CHAT_ID_AND_USER));
         ChatMessage chatMessage = new ChatMessage(aiMessage, chat, ChatSender.AI);
         chat.saveMessage(chatMessage);
     }
@@ -106,8 +108,10 @@ public class ChatServiceV2 implements ChatService {
     @Override
     @Transactional
     public void deleteChat(Long chatRoomId, SecurityUser securityUser) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername()).orElseThrow();
-        Chat chat = chatRepository.findChatByUserAndId(user, chatRoomId).orElseThrow();
+        User user = userRepository.findUserByEmail(securityUser.getUsername())
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
+        Chat chat = chatRepository.findChatByUserAndId(user, chatRoomId)
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_MATCHES_CHAT_ID_AND_USER));
         chatRepository.delete(chat);
     }
 }
