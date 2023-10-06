@@ -87,8 +87,7 @@ public class ChatServiceV2 implements ChatService {
                 topic +
                 MENTOR_ROLE +
                 MENTOR_OPTION_TEACHING_STYLE +
-                MENTOR_OPTION_KOREAN +
-                MENTOR_OPTION_SCORE;
+                MENTOR_OPTION_KOREAN;
 
         ChatCompletionRequest request = requestOpenAI(rolePrompt, question);
         return openAiService.streamChatCompletion(request);
