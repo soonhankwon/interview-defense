@@ -17,8 +17,8 @@ public class ExControllerAdvice {
         response.sendError(404);
     }
 
-    @ExceptionHandler({RuntimeException.class})
-    public void handleRuntimeEx(RuntimeException ex, HttpServletResponse response) throws IOException {
+    @ExceptionHandler({ApiException.class})
+    public void handleIllegalArgEx(ApiException ex, HttpServletResponse response) throws IOException {
         log.error("error message={}", ex.getMessage());
         response.sendError(400);
     }

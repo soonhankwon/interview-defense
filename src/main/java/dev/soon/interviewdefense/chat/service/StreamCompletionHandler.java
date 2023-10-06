@@ -7,6 +7,8 @@ import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.domain.ChatSender;
 import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
+import dev.soon.interviewdefense.exception.ApiException;
+import dev.soon.interviewdefense.exception.CustomErrorCode;
 import io.reactivex.Flowable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +41,9 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
             String userMessage = payloadSegments[1];
 
             Chat chat = chatRepository.findById(chatId)
-                    .orElseThrow();
+                    .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_CHATROOM_IN_DB));
             ChatMessage chatMessageDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat)
-                    .orElseThrow();
+                    .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LATEST_CHAT_MESSAGE));
 
             chatMessageRepository.save(new ChatMessage(userMessage.substring(3), chat, ChatSender.USER));
             Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() +"]" + "글에서" + userMessage);
@@ -53,13 +55,13 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
             Long chatId = Long.parseLong(payloadSegments[0]);
             String userMessage = payloadSegments[1];
             Chat chat = chatRepository.findById(chatId)
-                    .orElseThrow();
+                    .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_CHATROOM_IN_DB));
             chatMessageRepository.save(new ChatMessage(userMessage, chat, ChatSender.USER));
             Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, userMessage);
             subscribeFlowable(session, chat, sb, responseFlowable);
         }
         else {
-            throw new IllegalArgumentException("FLAG 오류");
+            throw new ApiException(CustomErrorCode.INVALID_FLAG_IN_FRONT);
         }
     }
 

@@ -9,6 +9,8 @@ import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
+import dev.soon.interviewdefense.exception.ApiException;
+import dev.soon.interviewdefense.exception.CustomErrorCode;
 import dev.soon.interviewdefense.security.SecurityUser;
 import dev.soon.interviewdefense.user.domain.User;
 import dev.soon.interviewdefense.user.repository.UserRepository;
@@ -41,7 +43,7 @@ public class DefenseService {
     @Transactional
     public Long createDefenseChatRoom(SecurityUser securityUser, DefenseChatRoomReqDto dto) {
         User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
         Chat chat = new Chat(dto, user);
         chatRepository.save(chat);
         return chat.getId();
@@ -49,7 +51,8 @@ public class DefenseService {
 
 
     public String initDefensePrompt(SecurityUser securityUser, DefenseChatRoomReqDto dto) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername()).orElseThrow();
+        User user = userRepository.findUserByEmail(securityUser.getUsername())
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
         StringBuilder sb = new StringBuilder();
         user.getTechs().forEach(i -> sb.append(i.getName().getValue()).append(","));
         String userTechs = sb.toString();
@@ -79,20 +82,19 @@ public class DefenseService {
     }
 
     public String generateDefensePrompt(Chat chat, SecurityUser securityUser, ChatMessageDto dto) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername()).orElseThrow();
-        StringBuilder sb = new StringBuilder();
-        sb.append(DEFENSE_CHARACTER)
-                .append(chat.getTopic().getValue()).append(",")
-                .append(user.getPosition().getValue())
-                .append(DEFENSE_ROLE)
-                .append(DEFENSE_ROLE_SITUATION)
-                .append("상대방의 답변에 대한 점수를 꼭 점수:0~100 으로 평가해주세요.")
-                .append("연관된 추가적인 질문을 1개 해주세요. 다만")
-                .append(DEFENSE_OPTION_SCORE_GREAT)
-                .append(chat.getTopic().getValue())
-                .append("에 대한 다른 질문을 해주세요.")
-                .append(DEFENSE_OPTION_SCORE_DONT_KNOW);
-        String rolePrompt = sb.toString();
+        User user = userRepository.findUserByEmail(securityUser.getUsername())
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
+        String rolePrompt = DEFENSE_CHARACTER +
+                chat.getTopic().getValue() + "," +
+                user.getPosition().getValue() +
+                DEFENSE_ROLE +
+                DEFENSE_ROLE_SITUATION +
+                "상대방의 답변에 대한 점수를 꼭 점수:0~100 으로 평가해주세요." +
+                "연관된 추가적인 질문을 1개 해주세요. 다만" +
+                DEFENSE_OPTION_SCORE_GREAT +
+                chat.getTopic().getValue() +
+                "에 대한 다른 질문을 해주세요." +
+                DEFENSE_OPTION_SCORE_DONT_KNOW;
 
         Optional<ChatMessage> optionalChatMessageByAIDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat);
         String userPrompt = optionalChatMessageByAIDesc
