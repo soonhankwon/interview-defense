@@ -25,19 +25,45 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
     private final ChatRepository chatRepository;
     private final ChatService chatServiceV2;
 
+    private final static String DEEP_QUESTION_FLAG = "%deepQ%";
+    private final static String GENERAL_QUESTION_FLAG = "%generalQ%";
+
+
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-        String[] payloadSegments = payload.split("%flag%");
-        Long chatId = Long.parseLong(payloadSegments[0]);
-        String userMessage = payloadSegments[1];
-        Chat chat = chatRepository.findById(chatId).orElseThrow();
-        chatMessageRepository.save(new ChatMessage(userMessage, chat, ChatSender.USER));
-
         StringBuilder sb = new StringBuilder();
-        Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, userMessage);
+        if(payload.contains(DEEP_QUESTION_FLAG)) {
+            String[] payloadSegments = payload.split(DEEP_QUESTION_FLAG);
+            Long chatId = Long.parseLong(payloadSegments[0]);
+            String userMessage = payloadSegments[1];
 
-        // Flowable 을 구독하여 응답 스트림을 WebSocket 으로 전송
+            Chat chat = chatRepository.findById(chatId)
+                    .orElseThrow();
+            ChatMessage chatMessageDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat)
+                    .orElseThrow();
+
+            chatMessageRepository.save(new ChatMessage(userMessage.substring(3), chat, ChatSender.USER));
+            Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() +"]" + "글에서" + userMessage);
+            subscribeFlowable(session, chat, sb, responseFlowable);
+            return;
+        }
+        if(payload.contains(GENERAL_QUESTION_FLAG)) {
+            String[] payloadSegments = payload.split(GENERAL_QUESTION_FLAG);
+            Long chatId = Long.parseLong(payloadSegments[0]);
+            String userMessage = payloadSegments[1];
+            Chat chat = chatRepository.findById(chatId)
+                    .orElseThrow();
+            chatMessageRepository.save(new ChatMessage(userMessage, chat, ChatSender.USER));
+            Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, userMessage);
+            subscribeFlowable(session, chat, sb, responseFlowable);
+        }
+        else {
+            throw new IllegalArgumentException("FLAG 오류");
+        }
+    }
+
+    private void subscribeFlowable(WebSocketSession session, Chat chat, StringBuilder sb, Flowable<ChatCompletionChunk> responseFlowable) {
         responseFlowable.subscribe(
                 chunk -> {
                     try {
@@ -56,8 +82,6 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
                 () -> {
                     chatMessageRepository.save(new ChatMessage(sb.toString(), chat, ChatSender.AI));
                     sb.setLength(0);
-                    // 응답 스트림이 완료될 때 실행할 코드
-                    // 여기에서 스트림 종료를 처리하거나 추가 작업을 수행할 수 있습니다.
                 }
         );
     }
