@@ -44,10 +44,8 @@ public class ChatController {
         Chat chatRoom = chatServiceV2.getChatRoom(securityUser, chatRoomId);
         List<ChatMessage> chatMessagesInChatRoom = chatServiceV2.getChatRoomMessages(chatRoom);
         model.addAttribute("chatMessages", chatMessagesInChatRoom);
-        model.addAttribute("chat", chatRoom);
         User loginUserInfo = userService.getLoginUserInfo(securityUser);
         model.addAttribute("user", loginUserInfo);
-        model.addAttribute("chatMessageDto", new ChatMessageDto(null));
         return "chatRoom";
     }
 
