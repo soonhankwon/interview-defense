@@ -2,6 +2,8 @@ package dev.soon.interviewdefense.web;
 
 import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
+import dev.soon.interviewdefense.exception.ApiException;
+import dev.soon.interviewdefense.exception.CustomErrorCode;
 import dev.soon.interviewdefense.security.TokenStatus;
 import dev.soon.interviewdefense.security.service.JwtService;
 import dev.soon.interviewdefense.user.domain.User;
@@ -34,12 +36,11 @@ public class HomeController {
         }
 
         String email = jwtService.getSubjectFromToken(token);
-        User user = userRepository.findUserByEmail(email).get();
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
         List<Chat> chats = chatRepository.findChatsByUser(user);
-        List<Chat> defenseRankChats = chatRepository.findClosedDefenseChatsOrderByScoreDesc();
         model.addAttribute("chats", chats);
         model.addAttribute("user", user);
-        model.addAttribute("rank", defenseRankChats);
         return "loginHome";
     }
 }

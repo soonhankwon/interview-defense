@@ -30,7 +30,7 @@
     <div class="container" style="max-width: 600px">
         <a class="navbar-brand" href="/">TECH INTERVIEW DEFENSE</a>
         <div class="navbar-avatar">
-            <a href="/myPage"> <!-- mypage로 이동하는 링크 -->
+            <a href="/myPage">
                 <img th:src="${user.imageUrl}" alt="프로필 사진" class="avatar-image">
             </a>
         </div>
@@ -42,7 +42,7 @@
     <!-- 나머지 내용을 이어서 추가할 수 있습니다. -->
     <div class="py-5 text-center">
             <h2 class="retro-description">
-                An AI Mentoring and Technical Interview Question Defense Game
+                An AI Mentoring And Deep Dive with Tech Specialist
             </h2>
     </div>
 
@@ -52,7 +52,6 @@
         <tr>
             <th th:text="#{label.chat.topic}">주제</th>
             <th th:text="#{label.chat.createdAt}">시작일</th>
-            <th th:text="#{label.chat.mode}">모드</th>
             <th th:text="#{label.chat.enter}">입장</th>
             <th th:text="#{label.chat.delete}">채팅방삭제</th>
         </tr>
@@ -61,12 +60,8 @@
         <tr th:each="chat : ${chats}">
             <td th:text="${chat.topic}">주제</td>
             <td th:text="${#temporals.format(chat.createAt,'yyyy-MM-dd HH:mm')}">시작일</td>
-            <td th:text="${chat.mode}">모드</td>
             <td>
-                <a th:if="${chat.mode == T(dev.soon.interviewdefense.chat.domain.ChatMode).MENTOR}"
-                   th:href="@{/chat/{chatId}(chatId=${chat.id})}" class="btn btn-primary btn-sm" role="button">입장</a>
-                <a th:if="${chat.mode == T(dev.soon.interviewdefense.chat.domain.ChatMode).DEFENSE}"
-                   th:href="@{/chat/defense/{chatId}(chatId=${chat.id})}" class="btn btn-primary btn-sm" role="button">입장</a>
+                <a th:href="@{/chat/{chatId}(chatId=${chat.id})}" class="btn btn-primary btn-sm" role="button">입장</a>
             </td>
             <td>
                 <form th:action="@{/chat/{chatId}/delete(chatId=${chat.id})}" method="post">
@@ -83,40 +78,7 @@
             <a th:href="@{/chat/create}" class="w-100 btn btn-primary btn-lg" th:text="#{button.start.mentoring}">MENTORING
                 START</a>
         </div>
-
-        <div class="col">
-            <a th:href="@{/chat/defense/create}" class="w-100 btn btn-success btn-lg" th:text="#{button.start.defense}">DEFENSE
-                START</a>
-        </div>
     </div>
-
-    <hr class="my-4">
-    <h4>DEFENSE RANKING</h4>
-    <table class="table">
-        <thead>
-        <tr>
-            <th th:text="#{label.chat.rank}">랭킹</th>
-            <th th:text="#{label.chat.topic}">주제</th>
-            <th th:text="#{label.chat.score}">스코어</th>
-            <th th:text="#{label.chat.createdAt}">시작일</th>
-            <th th:text="#{label.chat.nickname}">닉네임</th>
-            <th th:text="#{label.chat.show}">보기</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="r, rowStat : ${rank}">
-            <td th:text="${rowStat.index + 1}">1</td>
-            <td th:text="${r.topic}">주제</td>
-            <td th:text="${r.defenseScore}">스코어</td>
-            <td th:text="${#temporals.format(r.createAt,'yyyy-MM-dd HH:mm')}">시작일</td>
-            <td th:text="${r.user.nickname}">Nickname</td>
-            <td>
-                <a th:href="@{/chat/defense/{chatId}(chatId=${r.id})}" class="btn btn-primary btn-sm"
-                   role="button">보기</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
 </div> <!-- /container -->
 </div>
 </body>

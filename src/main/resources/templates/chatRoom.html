@@ -19,11 +19,6 @@
             max-width: 560px;
         }
 
-        h4 {
-            font-family: 'Press Start 2P', cursive;
-            color: #39FF14;
-        }
-
         li {
             color: seashell;
         }
@@ -33,6 +28,10 @@
         }
 
         span {
+            color: seashell;
+        }
+
+        h4 {
             color: seashell;
         }
     </style>
@@ -117,6 +116,10 @@
 
     socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
+        if(message == null) {
+            location.reload();
+            return;
+        }
         chatOutput.innerHTML += `<span>${message}</span>`;
     };
 

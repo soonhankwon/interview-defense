@@ -10,6 +10,10 @@ import javax.persistence.*;
 @ToString
 @Getter
 @Entity
+@Table(name = "language", indexes = {
+        @Index(name = "idx_language_name_idx", columnList = "name"),
+        @Index(name = "fk_user_idx", columnList = "user_id")
+})
 public class Language {
 
     @Id

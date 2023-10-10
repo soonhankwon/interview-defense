@@ -71,20 +71,19 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
                     try {
                         String response = chunk.getChoices().get(0).getMessage().getContent();
                         log.info("response={}", response);
-                        if(response == null) {
+                        if(response != null) {
+                            sb.append(response);
+                            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
                             return;
                         }
-                        sb.append(response);
-                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(null)));
+                        chatMessageRepository.save(new ChatMessage(sb.toString(), chat, ChatSender.AI));
+                        sb.setLength(0);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 },
-                Throwable::printStackTrace,
-                () -> {
-                    chatMessageRepository.save(new ChatMessage(sb.toString(), chat, ChatSender.AI));
-                    sb.setLength(0);
-                }
+                Throwable::printStackTrace
         );
     }
 }
