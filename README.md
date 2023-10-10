@@ -7,13 +7,11 @@
   * [Architecture](#building_construction-architecture)
   * [Features](#dart-features)
   * [Issues](#fountain_pen-issues)
-  * [Color Reference](#art-color-reference)
 - [Roadmap](#compass-roadmap)
 - [Contact](#handshake-contact)
 
 <!-- About the Project -->
 ## :star2: About the Project
-
 
 <!-- Web URL -->
 ### 🌐 Web URL
@@ -76,19 +74,21 @@
 <!-- Features -->
 ### :dart: Features
 
-- OPEN AI API 를 사용한 AI 멘토링 및 기술 면접 디펜스 웹 애플리케이션입니다.
+- OpenAI API 를 사용한 AI 멘토링 및 기술 면접 디펜스 웹 애플리케이션입니다.
 - 멘토링 시 주제별 전문가의 멘토링을 받을 수 있습니다.
-- 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉽게 예시를들어 해당 주제의 전문가 답변을 제공합니다.
+- 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉽게 예시를 들어 해당 주제의 전문가 답변을 제공합니다.
 - 멘토링 답변에 대한 탐구할만한 연관질문 생성기능(DEEP DIVE)을 제공합니다.
-- 멘토링 모드는 현재 GPT 스트림 기능이 구현되어 있습니다.
+- 멘토링 모드는 StreamChatCompletion 기능이 구현되어 있습니다.
 - 기술 면접 디펜스 모드는 AI 면접관의 질문을 잘 답변해서 스코어를 올리는 모드입니다.
-- 디펜스 모드 클리어시 피드백이 제공됩니다.
+- 디펜스 모드 클리어시 종합적인 피드백이 제공됩니다.
 
 <!-- Issue -->
 ### :fountain_pen: Issues
 
-- [기술 면접 디펜스 모드에서 AI의 상황에 맞지 않는 응답 다수 발생 → 프롬프트 엔지니어링 중 지속적인 학습방법으로 개선](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
-- [멘토링 대기 Latency 약 10~15초 → GPT StreamChatCompletion 활용한 멘토링 응답 체감 대기시간 개선](https://www.notion.so/GPT-Stream-Completion-4dd198e0fe0745eab3ca1dad284c4e67?pvs=4)
+- [기술 면접 디펜스 모드에서 AI의 상황에 맞지 않는 응답 다수 발생]
+  * [프롬프트 엔지니어링의 지속적인 학습방법으로 개선](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
+- [멘토링 대기 Latency 약 10~15초]
+  * [GPT StreamChatCompletion 활용한 멘토링 응답대기 Latency 개선](https://www.notion.so/GPT-Stream-Completion-4dd198e0fe0745eab3ca1dad284c4e67?pvs=4)
 
 <!-- Roadmap -->
 ## :compass: Roadmap
@@ -96,15 +96,6 @@
 * [x] 멘토링모드 OpenAPI 스트리밍 기능 활용
 * [x] 멘토링 답변에 대한 연관질문 생성 기능 구현 
 * [ ] 디펜스모드 스트리밍 기능 활용 → 사용자 채팅 응답시간 편의성 개선 
-
-<!-- Color Reference -->
-### :art: Color Reference
-
-| Color             | Hex                                                                |
-| ----------------- | ------------------------------------------------------------------ |
-| Primary Color | ![#222831](https://via.placeholder.com/10/222831?text=+) #222831 |
-| Accent Color | ![#39FF14](https://via.placeholder.com/10/39FF14?text=+) #39FF14 |
-| Text Color | ![#fff5ee](https://via.placeholder.com/10/fff5ee?text=+) #fff5ee |
 
 <!-- Contact -->
 ## :handshake: Contact
