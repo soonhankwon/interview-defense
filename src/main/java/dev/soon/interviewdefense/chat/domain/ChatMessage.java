@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @Entity
+@Table(name = "chat_message", indexes = {
+        @Index(name = "fk_chat_idx", columnList = "chat_id")
+})
 public class ChatMessage {
 
     @Id
