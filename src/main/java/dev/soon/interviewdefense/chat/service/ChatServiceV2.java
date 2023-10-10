@@ -3,11 +3,9 @@ package dev.soon.interviewdefense.chat.service;
 import com.theokanning.openai.completion.chat.ChatCompletionChunk;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.service.OpenAiService;
-import dev.soon.interviewdefense.chat.controller.dto.ChatMessageDto;
 import dev.soon.interviewdefense.chat.controller.dto.ChatRoomReqDto;
 import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
-import dev.soon.interviewdefense.chat.domain.ChatSender;
 import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
 import dev.soon.interviewdefense.exception.ApiException;
@@ -60,29 +58,6 @@ public class ChatServiceV2 implements ChatService {
     }
 
     @Override
-    @Transactional
-    public Chat saveUserMessage(Long chatRoomId, SecurityUser securityUser, ChatMessageDto dto) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
-        Chat chat = chatRepository.findChatByIdAndUser(chatRoomId, user)
-                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_MATCHES_CHAT_ID_AND_USER));
-        ChatMessage chatMessage = new ChatMessage(dto.message(), chat, ChatSender.USER);
-        chat.saveMessage(chatMessage);
-        return chat;
-    }
-
-    @Override
-    @Transactional
-    public void saveAIMessage(Long chatRoomId, SecurityUser securityUser, String aiMessage) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
-        Chat chat = chatRepository.findChatByIdAndUser(chatRoomId, user)
-                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_MATCHES_CHAT_ID_AND_USER));
-        ChatMessage chatMessage = new ChatMessage(aiMessage, chat, ChatSender.AI);
-        chat.saveMessage(chatMessage);
-    }
-
-    @Override
     public Flowable<ChatCompletionChunk> generateStreamResponse(Chat chat, String question) {
         String topic = chat.getTopic().getValue();
         String rolePrompt = MENTOR_ROLE_CHARACTER +
@@ -110,7 +85,7 @@ public class ChatServiceV2 implements ChatService {
     public void deleteChat(Long chatRoomId, SecurityUser securityUser) {
         User user = userRepository.findUserByEmail(securityUser.getUsername())
                 .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
-        Chat chat = chatRepository.findChatByUserAndId(user, chatRoomId)
+        Chat chat = chatRepository.findChatByIdAndUser(chatRoomId, user)
                 .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_MATCHES_CHAT_ID_AND_USER));
         chatRepository.delete(chat);
     }
