@@ -114,6 +114,13 @@
     const relativeButton = document.getElementById('deep-button');
     const socket = new WebSocket('ws://27.96.134.7/v1/chat');
 
+    socket.onopen = () => {
+        const currentPath = window.location.pathname;
+        const pathSegments = currentPath.split('/');
+        const chatId = pathSegments[pathSegments.length - 1];
+        socket.send(chatId + '%start%');
+    }
+
     socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
         if(message == null) {
@@ -125,27 +132,20 @@
 
     sendButton.addEventListener('click', () => {
         const userMessage = userInput.value;
-        const currentPath = window.location.pathname;
-        const pathSegments = currentPath.split('/');
-        const chatId = pathSegments[pathSegments.length - 1] + '%generalQ%';
         if (userMessage.trim() !== '') {
             // 사용자 입력을 WebSocket 을 통해 서버로 전송
-            socket.send(chatId + userMessage);
-
+            socket.send(userMessage);
             // 입력한 메시지를 화면에 표시
             chatOutput.innerHTML += `<p style="color: seashell">Q: ${userMessage}</p>`;
-
             // 입력 필드 초기화
             userInput.value = '';
         }
     });
 
     relativeButton.addEventListener('click', () => {
-        const currentPath = window.location.pathname;
-        const pathSegments = currentPath.split('/');
-        const chatId = pathSegments[pathSegments.length - 1] + '%deepQ%' + "에서 탐구할만한 질문들을 추천해주세요";
+        const deepMessage = '%deepQ%' + "에서 탐구할만한 질문들을 추천해주세요";
         // 사용자 입력을 WebSocket 을 통해 서버로 전송
-        socket.send(chatId);
+        socket.send(deepMessage);
         // 입력한 메시지를 화면에 표시
         chatOutput.innerHTML += `<p style="color: seashell">Q: 연관질문 추천</p>`;
     });
