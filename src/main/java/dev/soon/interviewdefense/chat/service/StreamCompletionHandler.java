@@ -22,14 +22,12 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @RequiredArgsConstructor
 public class StreamCompletionHandler extends TextWebSocketHandler {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRepository chatRepository;
     private final ChatService chatServiceV2;
 
     private final static String DEEP_QUESTION_FLAG = "%deepQ%";
     private final static String GENERAL_QUESTION_FLAG = "%generalQ%";
-
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -66,21 +64,32 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
     }
 
     private void subscribeFlowable(WebSocketSession session, Chat chat, StringBuilder sb, Flowable<ChatCompletionChunk> responseFlowable) {
+        StringBuilder chunkBuffer = new StringBuilder();
+        ObjectMapper objectMapper = new ObjectMapper();
         responseFlowable.subscribe(
                 chunk -> {
                     try {
                         String response = chunk.getChoices().get(0).getMessage().getContent();
                         log.info("response={}", response);
                         if(response != null) {
+                            chunkBuffer.append(response);
                             sb.append(response);
-                            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+                            if(chunkBuffer.toString().length() >= 5) {
+                                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
+                                chunkBuffer.setLength(0);
+                                return;
+                            }
                             return;
+                        }
+                        if(chunkBuffer.length() > 0) {
+                            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
+                            chunkBuffer.setLength(0);
                         }
                         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(null)));
                         chatMessageRepository.save(new ChatMessage(sb.toString(), chat, ChatSender.AI));
                         sb.setLength(0);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("An error occurred while processing the flowable", e);
                     }
                 },
                 Throwable::printStackTrace
