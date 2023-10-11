@@ -1,6 +1,5 @@
 package dev.soon.interviewdefense.chat.controller;
 
-import dev.soon.interviewdefense.chat.controller.dto.ChatMessageDto;
 import dev.soon.interviewdefense.chat.controller.dto.ChatRoomReqDto;
 import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
