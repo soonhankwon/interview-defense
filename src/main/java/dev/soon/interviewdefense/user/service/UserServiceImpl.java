@@ -1,5 +1,7 @@
 package dev.soon.interviewdefense.user.service;
 
+import dev.soon.interviewdefense.exception.ApiException;
+import dev.soon.interviewdefense.exception.CustomErrorCode;
 import dev.soon.interviewdefense.security.SecurityUser;
 import dev.soon.interviewdefense.user.domain.Language;
 import dev.soon.interviewdefense.user.domain.Tech;
@@ -29,69 +31,65 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public void updateMyPage(SecurityUser securityUser, MyPageUpdateForm form) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                        .orElseThrow(() -> new IllegalStateException());
+        User user = getUserBySecurityUser(securityUser);
         user.update(form);
     }
 
     @Override
     public User getLoginUserInfo(SecurityUser securityUser) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new IllegalStateException());
-        return user;
+        return getUserBySecurityUser(securityUser);
     }
 
     @Override
     public List<Language> getLoginUserLanguages(SecurityUser securityUser) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new IllegalStateException());
+        User user = getUserBySecurityUser(securityUser);
         return languageRepository.findLanguagesByUser(user);
     }
 
     @Override
     public List<Tech> getLoginUserTechs(SecurityUser securityUser) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new IllegalStateException());
+        User user = getUserBySecurityUser(securityUser);
         return techRepository.findTechesByUser(user);
     }
 
     @Override
     @Transactional
     public void addMyLanguageInMyPage(SecurityUser securityUser, MyLanguageReqDto dto) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new IllegalStateException());
+        User user = getUserBySecurityUser(securityUser);
         if(languageRepository.existsLanguageByUserAndName(user, dto.name()))
-            throw new IllegalArgumentException();
+            throw new ApiException(CustomErrorCode.ALREADY_EXISTS_LANGUAGE_BY_USER);
         user.addMyLanguage(dto);
     }
 
     @Override
     @Transactional
     public void deleteMyLanguageInMyPage(SecurityUser securityUser, Long languageId) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new IllegalStateException());
+        User user = getUserBySecurityUser(securityUser);
         Language language = languageRepository.findLanguageByIdAndUser(languageId, user)
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LANGUAGE_BY_USER));
         languageRepository.delete(language);
     }
 
     @Override
     @Transactional
     public void addMyTechInMyPage(SecurityUser securityUser, MyTechReqDto dto) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new IllegalStateException());
+        User user = getUserBySecurityUser(securityUser);
         if(techRepository.existsByUserAndName(user, dto.name()))
-            throw new IllegalArgumentException();
+            throw new ApiException(CustomErrorCode.ALREADY_EXISTS_TECH_BY_USER);
         user.addMyTech(dto);
     }
 
     @Override
     @Transactional
     public void deleteMyTechInMyPage(SecurityUser securityUser, Long techId) {
-        User user = userRepository.findUserByEmail(securityUser.getUsername())
-                .orElseThrow(() -> new IllegalStateException());
+        User user = getUserBySecurityUser(securityUser);
         Tech tech = techRepository.findTechByIdAndUser(techId, user)
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_TECH_BY_USER));
         techRepository.delete(tech);
+    }
+
+    private User getUserBySecurityUser(SecurityUser securityUser) {
+        return userRepository.findUserByEmail(securityUser.getUsername())
+                .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_USER_IN_DB));
     }
 }
