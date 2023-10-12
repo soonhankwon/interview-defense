@@ -87,6 +87,9 @@
   * [GPT StreamChatCompletion 활용한 멘토링 응답대기 Latency 개선](https://www.notion.so/GPT-Stream-Completion-4dd198e0fe0745eab3ca1dad284c4e67?pvs=4)
 - [GPT StreamChatCompletion 응답시간 개선]
   * [버퍼사용 - 약 1.2초, 개선율 6.87%](https://www.notion.so/GPT-StreamChatCompletion-5d83e24ec90b4e7282b0c310ea38690c?pvs=4)
+- [멘토링 서비스시 채팅(Chat) 조회 DB 콜 개선]
+  * [ConcurrentHashMap 활용 - 불필요 DB콜 개선, 약 4.6초, 개선율 약 26.93%](https://www.notion.so/Chat-DB-ConcurrentHashMap-648ad21769d94d7ba61e9036f016de19?pvs=4)
+
 <!-- Roadmap -->
 ## :compass: Roadmap
 
