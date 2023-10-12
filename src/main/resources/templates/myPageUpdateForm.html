@@ -5,35 +5,7 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/navbar.css}" rel="stylesheet">
     <link th:href="@{/css/background.css}" rel="stylesheet">
-    <style>
-        .py-5 {
-            font-family: 'Press Start 2P', cursive;
-            color: #39FF14;
-        }
-
-        h4 {
-            font-family: 'Press Start 2P', cursive;
-            color: #39FF14;
-        }
-        p {
-            color: seashell;
-        }
-        li {
-            color: seashell;
-        }
-        hr {
-            color: #39FF14;
-        }
-        .bi-dash-circle {
-            cursor: pointer;
-        }
-        .col {
-            font-family: 'Press Start 2P', cursive;
-        }
-        .btn-primary {
-            font-family: 'Press Start 2P', cursive;
-        }
-    </style>
+    <link th:href="@{/css/mypage-update-form.css}" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -74,7 +46,7 @@
                 <h4>Position:</h4>
                 <select class="form-control" th:field="*{position}">
                     <option th:each="position : ${T(dev.soon.interviewdefense.user.domain.Position).values()}"
-                            th:value="${position}" th:text="${position.getValue()}"></option>
+                            th:value="${position}" th:text="${position.value}"></option>
                 </select>
             </div>
         </div>
@@ -82,9 +54,9 @@
             <div class="col-md-6">
                 <h4>Language:</h4>
                 <ul>
-                    <li th:each="language : ${myLanguages}">
-                        <span th:text="${language.name.value}"></span>
-                        <span class="remove-language" th:data-id="${language.id}" onclick="removeLanguage(this.getAttribute('data-id'))">
+                    <li th:each="userLanguage : ${myLanguages}">
+                        <span th:text="${userLanguage.language.name}"></span>
+                        <span class="remove-userLanguage" th:data-id="${userLanguage.id}" onclick="removeLanguage(this.getAttribute('data-id'))">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">
         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
         <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
@@ -92,9 +64,9 @@
                         </span>
                     </li>
                 </ul>
-                <select class="form-control" id="language-select">
-                    <option th:each="language : ${T(dev.soon.interviewdefense.user.domain.LanguageName).values()}"
-                            th:value="${language}" th:text="${language.value}"></option>
+                <select class="form-control" id="userLanguage-select">
+                    <option th:each="userLanguage : ${T(dev.soon.interviewdefense.user.domain.Language).values()}"
+                            th:value="${userLanguage}" th:text="${userLanguage.name}"></option>
                 </select>
                 <button type="button" class="btn btn-primary mt-2" onclick="addLanguage()">Add Language</button>
             </div>
@@ -107,9 +79,9 @@
             <div class="col-md-6">
                 <h4>Tech:</h4>
                 <ul>
-                    <li th:each="tech : ${myTechs}">
-                        <span th:text="${tech.name.value}"></span>
-                        <span class="remove-tech" th:data-id="${tech.id}" onclick="removeTech(this.getAttribute('data-id'))">
+                    <li th:each="userTech : ${myTechs}">
+                        <span th:text="${userTech.tech.name}"></span>
+                        <span class="remove-userTech" th:data-id="${userTech.id}" onclick="removeTech(this.getAttribute('data-id'))">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">
         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
         <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
@@ -117,9 +89,9 @@
                         </span>
                     </li>
                 </ul>
-                <select class="form-control" id="tech-select">
-                    <option th:each="tech : ${T(dev.soon.interviewdefense.user.domain.TechName).values()}"
-                            th:value="${tech}" th:text="${tech.value}"></option>
+                <select class="form-control" id="userTech-select">
+                    <option th:each="userTech : ${T(dev.soon.interviewdefense.user.domain.Tech).values()}"
+                            th:value="${userTech}" th:text="${userTech.name}"></option>
                 </select>
                 <button type="button" class="btn btn-primary mt-2" onclick="addTech()">Add Tech</button>
             </div>
@@ -140,7 +112,7 @@
 
 <script>
     function addLanguage() {
-        const selectElement = document.getElementById("language-select");
+        const selectElement = document.getElementById("userLanguage-select");
         const selectedOption = selectElement.options[selectElement.selectedIndex];
 
         if (selectedOption) {
@@ -192,7 +164,7 @@
     }
 
     function addTech() {
-        const selectElement = document.getElementById("tech-select");
+        const selectElement = document.getElementById("userTech-select");
         const selectedOption = selectElement.options[selectElement.selectedIndex];
 
         if (selectedOption) {
