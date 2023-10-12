@@ -1,6 +1,6 @@
 package dev.soon.interviewdefense.web.dto;
 
-import dev.soon.interviewdefense.user.domain.TechName;
+import dev.soon.interviewdefense.user.domain.Tech;
 
-public record MyTechReqDto(TechName name) {
+public record MyTechReqDto(Tech name) {
 }

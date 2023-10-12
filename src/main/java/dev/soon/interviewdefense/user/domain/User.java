@@ -37,10 +37,10 @@ public class User {
     private Integer yearOfWorkExperience;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private final List<Language> languages = new ArrayList<>();
+    private final List<UserLanguage> userLanguages = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private final List<Tech> techs = new ArrayList<>();
+    private final List<UserTech> userTeches = new ArrayList<>();
 
     public User(String email, String nickname, String oauth2Provider, String imageUrl) {
         this.email = email;
@@ -58,10 +58,10 @@ public class User {
     }
 
     public void addMyLanguage(MyLanguageReqDto dto) {
-        this.languages.add(new Language(this, dto.name()));
+        this.userLanguages.add(new UserLanguage(this, dto.name()));
     }
 
     public void addMyTech(MyTechReqDto dto) {
-        this.techs.add(new Tech(this, dto.name()));
+        this.userTeches.add(new UserTech(this, dto.name()));
     }
 }

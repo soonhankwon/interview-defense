@@ -3,11 +3,11 @@ package dev.soon.interviewdefense.user.service;
 import dev.soon.interviewdefense.exception.ApiException;
 import dev.soon.interviewdefense.exception.CustomErrorCode;
 import dev.soon.interviewdefense.security.SecurityUser;
-import dev.soon.interviewdefense.user.domain.Language;
-import dev.soon.interviewdefense.user.domain.Tech;
+import dev.soon.interviewdefense.user.domain.UserLanguage;
+import dev.soon.interviewdefense.user.domain.UserTech;
 import dev.soon.interviewdefense.user.domain.User;
-import dev.soon.interviewdefense.user.repository.LanguageRepository;
-import dev.soon.interviewdefense.user.repository.TechRepository;
+import dev.soon.interviewdefense.user.repository.UserLanguageRepository;
+import dev.soon.interviewdefense.user.repository.UserTechRepository;
 import dev.soon.interviewdefense.user.repository.UserRepository;
 import dev.soon.interviewdefense.web.dto.MyLanguageReqDto;
 import dev.soon.interviewdefense.web.dto.MyPageUpdateForm;
@@ -25,8 +25,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
-    private final LanguageRepository languageRepository;
-    private final TechRepository techRepository;
+    private final UserLanguageRepository userLanguageRepository;
+    private final UserTechRepository userTechRepository;
 
     @Override
     @Transactional
@@ -41,22 +41,22 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<Language> getLoginUserLanguages(SecurityUser securityUser) {
+    public List<UserLanguage> getLoginUserLanguages(SecurityUser securityUser) {
         User user = getUserBySecurityUser(securityUser);
-        return languageRepository.findLanguagesByUser(user);
+        return userLanguageRepository.findUserLanguagesByUser(user);
     }
 
     @Override
-    public List<Tech> getLoginUserTechs(SecurityUser securityUser) {
+    public List<UserTech> getLoginUserTechs(SecurityUser securityUser) {
         User user = getUserBySecurityUser(securityUser);
-        return techRepository.findTechesByUser(user);
+        return userTechRepository.findUserTechesByUser(user);
     }
 
     @Override
     @Transactional
     public void addMyLanguageInMyPage(SecurityUser securityUser, MyLanguageReqDto dto) {
         User user = getUserBySecurityUser(securityUser);
-        if(languageRepository.existsLanguageByUserAndName(user, dto.name()))
+        if(userLanguageRepository.existsUserLanguageByUserAndLanguage(user, dto.name()))
             throw new ApiException(CustomErrorCode.ALREADY_EXISTS_LANGUAGE_BY_USER);
         user.addMyLanguage(dto);
     }
@@ -65,16 +65,16 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public void deleteMyLanguageInMyPage(SecurityUser securityUser, Long languageId) {
         User user = getUserBySecurityUser(securityUser);
-        Language language = languageRepository.findLanguageByIdAndUser(languageId, user)
+        UserLanguage userLanguage = userLanguageRepository.findUserLanguageByIdAndUser(languageId, user)
                 .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LANGUAGE_BY_USER));
-        languageRepository.delete(language);
+        userLanguageRepository.delete(userLanguage);
     }
 
     @Override
     @Transactional
     public void addMyTechInMyPage(SecurityUser securityUser, MyTechReqDto dto) {
         User user = getUserBySecurityUser(securityUser);
-        if(techRepository.existsByUserAndName(user, dto.name()))
+        if(userTechRepository.existsByUserAndTech(user, dto.name()))
             throw new ApiException(CustomErrorCode.ALREADY_EXISTS_TECH_BY_USER);
         user.addMyTech(dto);
     }
@@ -83,9 +83,9 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public void deleteMyTechInMyPage(SecurityUser securityUser, Long techId) {
         User user = getUserBySecurityUser(securityUser);
-        Tech tech = techRepository.findTechByIdAndUser(techId, user)
+        UserTech userTech = userTechRepository.findUserTechByIdAndUser(techId, user)
                 .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_TECH_BY_USER));
-        techRepository.delete(tech);
+        userTechRepository.delete(userTech);
     }
 
     private User getUserBySecurityUser(SecurityUser securityUser) {
