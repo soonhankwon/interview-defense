@@ -1,8 +1,8 @@
 package dev.soon.interviewdefense.web;
 
 import dev.soon.interviewdefense.security.SecurityUser;
-import dev.soon.interviewdefense.user.domain.Language;
-import dev.soon.interviewdefense.user.domain.Tech;
+import dev.soon.interviewdefense.user.domain.UserLanguage;
+import dev.soon.interviewdefense.user.domain.UserTech;
 import dev.soon.interviewdefense.user.domain.User;
 import dev.soon.interviewdefense.user.service.UserService;
 import dev.soon.interviewdefense.web.dto.MyLanguageReqDto;
@@ -26,22 +26,22 @@ public class MyPageController {
     @GetMapping("/myPage")
     public String myPage(@AuthenticationPrincipal SecurityUser securityUser, Model model) {
         User loginUserInfo = userService.getLoginUserInfo(securityUser);
-        List<Language> loginUserLanguages = userService.getLoginUserLanguages(securityUser);
-        List<Tech> loginUserTechs = userService.getLoginUserTechs(securityUser);
+        List<UserLanguage> loginUserLanguages = userService.getLoginUserLanguages(securityUser);
+        List<UserTech> loginUserTeches = userService.getLoginUserTechs(securityUser);
         model.addAttribute("user", loginUserInfo);
         model.addAttribute("myLanguages", loginUserLanguages);
-        model.addAttribute("myTechs", loginUserTechs);
+        model.addAttribute("myTechs", loginUserTeches);
         return "myPage";
     }
 
     @GetMapping("/myPage/update")
     public String updateMyPage(@AuthenticationPrincipal SecurityUser securityUser, Model model) {
         User loginUserInfo = userService.getLoginUserInfo(securityUser);
-        List<Language> loginUserLanguages = userService.getLoginUserLanguages(securityUser);
-        List<Tech> loginUserTechs = userService.getLoginUserTechs(securityUser);
+        List<UserLanguage> loginUserLanguages = userService.getLoginUserLanguages(securityUser);
+        List<UserTech> loginUserTeches = userService.getLoginUserTechs(securityUser);
         model.addAttribute("user", loginUserInfo);
         model.addAttribute("myLanguages", loginUserLanguages);
-        model.addAttribute("myTechs", loginUserTechs);
+        model.addAttribute("myTechs", loginUserTeches);
         return "myPageUpdateForm";
     }
 

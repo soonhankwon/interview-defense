@@ -5,26 +5,7 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/navbar.css}" rel="stylesheet">
     <link th:href="@{/css/background.css}" rel="stylesheet">
-    <style>
-        .py-5 {
-            font-family: 'Press Start 2P', cursive;
-            color: #39FF14;
-        }
-
-        h4 {
-            font-family: 'Press Start 2P', cursive;
-            color: #39FF14;
-        }
-        p {
-            color: seashell;
-        }
-        li {
-            color: seashell;
-        }
-        .col {
-            font-family: 'Press Start 2P', cursive;
-        }
-    </style>
+    <link th:href="@{/css/mypage.css}" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -70,7 +51,7 @@
         <div class="col-md-6">
             <h4>Language:</h4>
             <ul>
-                <li th:each="language : ${myLanguages}" th:text="${language.getName().value}"></li>
+                <li th:each="userLanguage : ${myLanguages}" th:text="${userLanguage.language.name}"></li>
             </ul>
         </div>
         <div class="col-md-6">
@@ -82,7 +63,7 @@
         <div class="col-md-6">
             <h4>Tech:</h4>
             <ul>
-                <li th:each="tech : ${myTechs}" th:text="${tech.getName().value}"></li>
+                <li th:each="userTech : ${myTechs}" th:text="${userTech.tech.name}"></li>
             </ul>
         </div>
     </div>
