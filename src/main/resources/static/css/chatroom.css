@@ -1,0 +1,28 @@
+.col {
+    font-family: 'Press Start 2P', cursive;
+}
+
+.py-5 {
+    color: #39FF14;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.container {
+    max-width: 560px;
+}
+
+li {
+    color: seashell;
+}
+
+hr {
+    color: #39FF14;
+}
+
+span {
+    color: seashell;
+}
+
+h4 {
+    color: seashell;
+}
