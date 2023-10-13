@@ -31,15 +31,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        log.info("request URL = {}", requestURI);
+        log.info("request URL = {}, method={}", requestURI, request.getMethod());
         Optional<Cookie> accessToken = Arrays.stream(request.getCookies()).filter(i -> i.getName().equals("AccessToken")).findFirst();
         if(accessToken.isEmpty()) {
             response.sendRedirect("/login?redirectURL=" + requestURI);
             return;
         }
         String token = accessToken.get().getValue();
-        log.info("Cookie = {}", token);
-
         TokenStatus tokenStatus = jwtService.validateToken(token);
         if(tokenStatus == TokenStatus.EXPIRED) {
             response.sendRedirect("/");

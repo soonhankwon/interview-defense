@@ -104,20 +104,15 @@
     sendButton.addEventListener('click', () => {
         const userMessage = userInput.value;
         if (userMessage.trim() !== '') {
-            // 사용자 입력을 WebSocket 을 통해 서버로 전송
             socket.send(userMessage);
-            // 입력한 메시지를 화면에 표시
             chatOutput.innerHTML += `<p style="color: seashell">Q: ${userMessage}</p>`;
-            // 입력 필드 초기화
             userInput.value = '';
         }
     });
 
     relativeButton.addEventListener('click', () => {
-        const deepMessage = '%deepQ%' + "에서 탐구할만한 질문들을 추천해주세요";
-        // 사용자 입력을 WebSocket 을 통해 서버로 전송
+        const deepMessage = '%deepQ%';
         socket.send(deepMessage);
-        // 입력한 메시지를 화면에 표시
-        chatOutput.innerHTML += `<p style="color: seashell">Q: 연관질문 추천</p>`;
+        chatOutput.innerHTML += `<p style="color: seashell">DEEP DIVE!</p>`;
     });
 </script>

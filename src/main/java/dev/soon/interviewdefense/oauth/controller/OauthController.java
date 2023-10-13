@@ -35,7 +35,6 @@ public class OauthController {
             Cookie cookie = new Cookie("AccessToken", accessToken);
             cookie.setPath("/");
             response.addCookie(cookie);
-            log.info("cookie={}", cookie.getValue());
             return "redirect:" + redirectUrl;
         }
         if(provider.equals("naver")) {
@@ -44,7 +43,6 @@ public class OauthController {
             Cookie cookie = new Cookie("AccessToken", accessToken);
             cookie.setPath("/");
             response.addCookie(cookie);
-            log.info("cookie={}", cookie.getValue());
             return "redirect:" + redirectUrl;
         }
         return "redirect:/";

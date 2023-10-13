@@ -7,6 +7,7 @@ import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.domain.ChatSender;
 import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
+import dev.soon.interviewdefense.chat.util.PromptGenerator;
 import dev.soon.interviewdefense.exception.ApiException;
 import dev.soon.interviewdefense.exception.CustomErrorCode;
 import io.reactivex.Flowable;
@@ -34,6 +35,7 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
     private final ChatService chatServiceV2;
 
     private final static String DEEP_QUESTION_FLAG = "%deepQ%";
+    private final static String DEEP_DIVE = "DEEP DIVE!";
     private final static String START_CHAT_FLAG = "%start%";
 
     private static long start;
@@ -50,7 +52,6 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         start = System.currentTimeMillis();
-        log.info("start logic={}", start);
         String payload = message.getPayload();
         String email = Objects.requireNonNull(session.getPrincipal()).getName();
         if(hasStartFlag(payload)) {
@@ -59,13 +60,12 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
         }
         StringBuilder sb = new StringBuilder();
         if (hasDeepFlag(payload)) {
-            String userMessage = payload.replaceAll(DEEP_QUESTION_FLAG, "");
             Chat chat = map.get(email);
             ChatMessage chatMessageDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat)
                     .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LATEST_CHAT_MESSAGE));
 
-            chatMessageRepository.save(new ChatMessage(userMessage.substring(3), chat, ChatSender.USER));
-            Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() + "]" + "글에서" + userMessage);
+            chatMessageRepository.save(new ChatMessage(DEEP_DIVE, chat, ChatSender.USER));
+            Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() + "]" + PromptGenerator.DEEP_DIVE);
             subscribeFlowable(session, chat, sb, responseFlowable);
         } else {
             Chat chat = map.get(email);
@@ -97,7 +97,6 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
                 chunk -> {
                     try {
                         String response = chunk.getChoices().get(0).getMessage().getContent();
-                        log.info("response={}", response);
                         if (response != null) {
                             chunkBuffer.append(response);
                             sb.append(response);
