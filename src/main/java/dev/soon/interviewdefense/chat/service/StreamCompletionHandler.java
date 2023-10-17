@@ -5,6 +5,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionChunk;
 import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.domain.ChatSender;
+import dev.soon.interviewdefense.chat.event.MessageSendEvent;
 import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
 import dev.soon.interviewdefense.chat.util.PromptGenerator;
@@ -13,6 +14,7 @@ import dev.soon.interviewdefense.exception.CustomErrorCode;
 import io.reactivex.Flowable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -29,12 +31,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class StreamCompletionHandler extends TextWebSocketHandler {
 
-    private final Map<String, Chat> map = new ConcurrentHashMap<>();
+    private final Map<String, Chat> chatMap = new ConcurrentHashMap<>();
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRepository chatRepository;
     private final ChatService chatServiceV2;
 
-    private final static String DEEP_QUESTION_FLAG = "%deepQ%";
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    public final static String DEEP_QUESTION_FLAG = "%deepQ%";
     private final static String DEEP_DIVE = "DEEP DIVE!";
     private final static String START_CHAT_FLAG = "%start%";
 
@@ -44,7 +48,7 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         Principal principal = session.getPrincipal();
         if (Objects.requireNonNull(principal).getName() != null) {
-            map.remove(principal.getName());
+            chatMap.remove(principal.getName());
         }
         session.close();
     }
@@ -59,17 +63,16 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
             return;
         }
         StringBuilder sb = new StringBuilder();
+        Chat chat = chatMap.get(email);
         if (hasDeepFlag(payload)) {
-            Chat chat = map.get(email);
             ChatMessage chatMessageDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat)
                     .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LATEST_CHAT_MESSAGE));
-
-            chatMessageRepository.save(new ChatMessage(DEEP_DIVE, chat, ChatSender.USER));
-            Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() + "]" + PromptGenerator.DEEP_DIVE);
+            applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(DEEP_DIVE, chat, ChatSender.USER)));
+            Flowable<ChatCompletionChunk> responseFlowable =
+                    chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() + "]" + PromptGenerator.DEEP_DIVE);
             subscribeFlowable(session, chat, sb, responseFlowable);
         } else {
-            Chat chat = map.get(email);
-            chatMessageRepository.save(new ChatMessage(payload, chat, ChatSender.USER));
+            applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(payload, chat, ChatSender.USER)));
             Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, payload);
             subscribeFlowable(session, chat, sb, responseFlowable);
         }
@@ -83,7 +86,7 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
         Long chatId = Long.parseLong(payload.replaceAll(START_CHAT_FLAG, ""));
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_CHATROOM_IN_DB));
-        map.put(email, chat);
+        chatMap.put(email, chat);
     }
 
     private boolean hasDeepFlag(String payload) {
@@ -97,30 +100,38 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
                 chunk -> {
                     try {
                         String response = chunk.getChoices().get(0).getMessage().getContent();
-                        if (response != null) {
+                        if (!hasStreamFinishFlag(response)) {
                             chunkBuffer.append(response);
                             sb.append(response);
-                            if (chunkBuffer.toString().length() >= 5) {
+                            if (chunkBuffer.length() >= 5) {
                                 session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
                                 chunkBuffer.setLength(0);
-                                return;
                             }
                             return;
                         }
-                        if (chunkBuffer.length() > 0) {
+                        if (hasBufferRemainingChunk(chunkBuffer)) {
                             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
                             chunkBuffer.setLength(0);
                         }
+                        applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(sb.toString(), chat, ChatSender.AI)));
                         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(null)));
-                        chatMessageRepository.save(new ChatMessage(sb.toString(), chat, ChatSender.AI));
                         sb.setLength(0);
+
                         long end = System.currentTimeMillis();
-                        log.info("spend time={}", end - start);
+                        log.info("streaming spend time={}", end - start);
                     } catch (Exception e) {
                         log.error("An error occurred while processing the flowable", e);
                     }
                 },
                 Throwable::printStackTrace
         );
+    }
+
+    private boolean hasStreamFinishFlag(String response) {
+        return response == null;
+    }
+
+    private boolean hasBufferRemainingChunk(StringBuilder builder) {
+        return builder.length() > 0;
     }
 }
