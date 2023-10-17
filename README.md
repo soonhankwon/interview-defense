@@ -66,7 +66,7 @@
 <!-- Architecture -->
 ### :building_construction: Architecture
 <div align="center"> 
-<img src="https://github.com/soonhankwon/tech-interview-defense/assets/113872320/dd084992-eeaf-4ce2-95a2-a9ebce0b10c0" width="540" height="330">
+<img src="https://github.com/soonhankwon/tech-interview-defense/assets/113872320/ab99c965-e925-4de5-bfcc-a8b5480bfe0d" width="540" height="330">
 </div>
 
 <!-- Features -->
