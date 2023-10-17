@@ -16,7 +16,7 @@
 
 <!-- Web URL -->
 ### :globe_with_meridians: web url
-- http://27.96.134.7
+- http://43.202.192.55/
 
 <!-- Screenshots -->
 ### :camera: Screenshots
@@ -56,8 +56,9 @@
 <details>
 <summary>DevOps</summary>
  
-  - Naver Cloud DB for MySQL
-  - Naver Cloud Compute Server
+  - AWS VPC
+  - AWS EC2
+  - AWS RDS
   - Docker
   - Github Actions
 </details>
@@ -89,12 +90,14 @@
   * [버퍼사용 - 약 1.2초, 개선율 6.87%](https://www.notion.so/GPT-StreamChatCompletion-5d83e24ec90b4e7282b0c310ea38690c?pvs=4)
 - [멘토링 서비스시 채팅(Chat) 조회 DB 콜 개선]
   * [ConcurrentHashMap 활용 - 불필요 DB콜 개선, 약 4.6초, 개선율 약 26.93%](https://www.notion.so/Chat-DB-ConcurrentHashMap-648ad21769d94d7ba61e9036f016de19?pvs=4)
+- [NCloud 크레딧 소진으로 인한 AWS 이전 - 클라우드 인프라 구축]
 
 <!-- Roadmap -->
 ## :compass: Roadmap
 
 * [x] 멘토링모드 OpenAPI 스트리밍 기능 활용
-* [x] 멘토링 답변에 대한 연관질문 생성 기능 구현  
+* [x] 멘토링 답변에 대한 연관질문 생성 기능 구현
+* [x] NCloud 에서 AWS로 서버이전  
 
 <!-- Contact -->
 ## :handshake: Contact
