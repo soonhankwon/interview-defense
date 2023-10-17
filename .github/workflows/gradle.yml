@@ -58,13 +58,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew bootJar
       
-      - name: NCOULD Docker Cleanup
+      - name: EC2 Docker Cleanup
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.NCLOUD_HOST }}
-          username: ${{ secrets.NCLOUD_USERNAME }}
-          password: ${{ secrets.NCLOUD_PASSWORD }}
-          port: ${{ secrets.NCLOUD_SSH_PORT }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
           script: |
             # 구동중인 모든 컨테이너 스탑 & 삭제
             sudo docker stop $(sudo docker ps -q --filter "ancestor=${{ secrets.DOCKER_USERNAME }}/interviewdefense")
@@ -84,13 +83,12 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/interviewdefense
 
       # 서버에서 Docker 이미지 실행
-      - name: NCLOUD Docker Run
+      - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.NCLOUD_HOST }}
-          username: ${{ secrets.NCLOUD_USERNAME }}
-          password: ${{ secrets.NCLOUD_PASSWORD }}
-          port: ${{ secrets.NCLOUD_SSH_PORT }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/interviewdefense
             sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/interviewdefense
