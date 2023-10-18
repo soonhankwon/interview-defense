@@ -43,8 +43,10 @@ public class ChatController {
         Chat chatRoom = chatServiceV2.getChatRoom(securityUser, chatRoomId);
         List<ChatMessage> chatMessagesInChatRoom = chatServiceV2.getChatRoomMessages(chatRoom);
         model.addAttribute("chatMessages", chatMessagesInChatRoom);
-        User loginUserInfo = userService.getLoginUserInfo(securityUser);
-        model.addAttribute("user", loginUserInfo);
+
+        String email = securityUser.getUsername();
+        User loginUser = userService.getUserByEmail(email);
+        model.addAttribute("user", loginUser);
         return "chatRoom";
     }
 

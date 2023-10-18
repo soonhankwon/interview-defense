@@ -51,7 +51,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
-        corsConfiguration.addAllowedOrigin("http://27.96.134.7");
+        corsConfiguration.addAllowedOrigin("http://43.202.192.55");
         corsConfiguration.addAllowedOriginPattern("*");
         corsConfiguration.setAllowedMethods(Arrays.asList("POST", "GET"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
