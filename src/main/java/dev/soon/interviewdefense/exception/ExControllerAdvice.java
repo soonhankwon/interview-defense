@@ -18,8 +18,8 @@ public class ExControllerAdvice {
     }
 
     @ExceptionHandler({ApiException.class})
-    public void handleIllegalArgEx(ApiException ex, HttpServletResponse response) throws IOException {
-        log.error("error message={}", ex.getMessage());
+    public void handleApiEx(ApiException ex, HttpServletResponse response) throws IOException {
+        log.error("error message={}", ex.getCustomErrorCode().getMessage());
         response.sendError(400);
     }
 }
