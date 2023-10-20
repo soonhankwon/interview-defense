@@ -29,11 +29,11 @@ public class MyPageController {
         String email = getEmailBySecurityUser(securityUser);
         User loginUser = userService.getUserByEmail(email);
         List<UserLanguage> loginUserLanguages = userService.getUserLanguages(email);
-        List<UserTech> loginUserTeches = userService.getUserTechs(email);
+        List<UserTech> loginUserTechs = userService.getUserTechs(email);
 
         model.addAttribute("user", loginUser);
         model.addAttribute("myLanguages", loginUserLanguages);
-        model.addAttribute("myTechs", loginUserTeches);
+        model.addAttribute("myTechs", loginUserTechs);
         return "myPage";
     }
 
