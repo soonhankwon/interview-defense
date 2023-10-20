@@ -29,13 +29,9 @@ import static dev.soon.interviewdefense.chat.util.PromptGenerator.*;
 public class ChatServiceV2 implements ChatService {
 
     private final ChatRepository chatRepository;
-
     private final UserRepository userRepository;
-
     private final OpenAiService openAiService;
-
     private final ChatMessageRepository chatMessageRepository;
-
     private final ChatCacheStore chatCacheStore;
 
     @Override
