@@ -28,8 +28,8 @@ public class MyPageController {
                          Model model) {
         String email = getEmailBySecurityUser(securityUser);
         User loginUser = userService.getUserByEmail(email);
-        List<UserLanguage> loginUserLanguages = userService.getLoginUserLanguages(email);
-        List<UserTech> loginUserTeches = userService.getLoginUserTechs(email);
+        List<UserLanguage> loginUserLanguages = userService.getUserLanguages(email);
+        List<UserTech> loginUserTeches = userService.getUserTechs(email);
 
         model.addAttribute("user", loginUser);
         model.addAttribute("myLanguages", loginUserLanguages);
@@ -46,12 +46,12 @@ public class MyPageController {
                                Model model) {
         String email = getEmailBySecurityUser(securityUser);
         User loginUser = userService.getUserByEmail(email);
-        List<UserLanguage> loginUserLanguages = userService.getLoginUserLanguages(email);
-        List<UserTech> loginUserTeches = userService.getLoginUserTechs(email);
+        List<UserLanguage> loginUserLanguages = userService.getUserLanguages(email);
+        List<UserTech> loginUserTechs = userService.getUserTechs(email);
 
         model.addAttribute("user", loginUser);
         model.addAttribute("myLanguages", loginUserLanguages);
-        model.addAttribute("myTechs", loginUserTeches);
+        model.addAttribute("myTechs", loginUserTechs);
         return "myPageUpdateForm";
     }
 
