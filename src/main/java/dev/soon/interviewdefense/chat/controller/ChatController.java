@@ -33,18 +33,20 @@ public class ChatController {
     @PostMapping("/create")
     public String createChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
                                  @ModelAttribute("chat") ChatRoomReqDto dto) {
-        Long chatRoomId = chatServiceV2.createChatRoom(securityUser, dto);
+        String email = securityUser.getUsername();
+        Long chatRoomId = chatServiceV2.createChatRoom(email, dto);
         return "redirect:/chat/" + chatRoomId;
     }
 
     @GetMapping("/{chatRoomId}")
     public String getChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
-                              @PathVariable Long chatRoomId, Model model) {
-        Chat chatRoom = chatServiceV2.getChatRoom(securityUser, chatRoomId);
+                              @PathVariable Long chatRoomId,
+                              Model model) {
+        String email = securityUser.getUsername();
+        Chat chatRoom = chatServiceV2.getChatRoom(email, chatRoomId);
         List<ChatMessage> chatMessagesInChatRoom = chatServiceV2.getChatRoomMessages(chatRoom);
         model.addAttribute("chatMessages", chatMessagesInChatRoom);
 
-        String email = securityUser.getUsername();
         User loginUser = userService.getUserByEmail(email);
         model.addAttribute("user", loginUser);
         return "chatRoom";
@@ -53,7 +55,8 @@ public class ChatController {
     @PostMapping("/{chatRoomId}/delete")
     public String deleteChat(@PathVariable Long chatRoomId,
                              @AuthenticationPrincipal SecurityUser securityUser) {
-        chatServiceV2.deleteChat(chatRoomId, securityUser);
+        String email = securityUser.getUsername();
+        chatServiceV2.deleteChat(chatRoomId, email);
         return "redirect:/";
     }
 }

@@ -6,6 +6,7 @@ import dev.soon.interviewdefense.chat.domain.Chat;
 import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.domain.ChatSender;
 import dev.soon.interviewdefense.chat.event.MessageSendEvent;
+import dev.soon.interviewdefense.chat.respository.ChatCacheStore;
 import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
 import dev.soon.interviewdefense.chat.util.PromptGenerator;
@@ -22,33 +23,29 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.security.Principal;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class StreamCompletionHandler extends TextWebSocketHandler {
 
-    private final Map<String, Chat> chatMap = new ConcurrentHashMap<>();
+    private final ChatCacheStore cacheStore;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRepository chatRepository;
     private final ChatService chatServiceV2;
-
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public final static String DEEP_QUESTION_FLAG = "%deepQ%";
     private final static String DEEP_DIVE = "DEEP DIVE!";
     private final static String START_CHAT_FLAG = "%start%";
-
     private static long start;
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         Principal principal = session.getPrincipal();
         if (Objects.requireNonNull(principal).getName() != null) {
-            chatMap.remove(principal.getName());
+            cacheStore.removeCache(principal.getName());
         }
         session.close();
     }
@@ -63,7 +60,7 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        Chat chat = chatMap.get(email);
+        Chat chat = cacheStore.getChatByCacheKey(email);
         if (hasDeepFlag(payload)) {
             ChatMessage chatMessageDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat)
                     .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LATEST_CHAT_MESSAGE));
@@ -86,7 +83,7 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
         Long chatId = Long.parseLong(payload.replaceAll(START_CHAT_FLAG, ""));
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_CHATROOM_IN_DB));
-        chatMap.put(email, chat);
+        cacheStore.cacheEmailAndChat(email, chat);
     }
 
     private boolean hasDeepFlag(String payload) {

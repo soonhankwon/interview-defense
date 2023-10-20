@@ -40,7 +40,7 @@ public class User {
     private final List<UserLanguage> userLanguages = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private final List<UserTech> userTeches = new ArrayList<>();
+    private final List<UserTech> userTechs = new ArrayList<>();
 
     public User(String email, String nickname, String oauth2Provider, String imageUrl) {
         this.email = email;
@@ -62,6 +62,6 @@ public class User {
     }
 
     public void addMyTech(MyTechReqDto dto) {
-        this.userTeches.add(new UserTech(this, dto.name()));
+        this.userTechs.add(new UserTech(this, dto.name()));
     }
 }

@@ -41,13 +41,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserLanguage> getLoginUserLanguages(String email) {
+    public List<UserLanguage> getUserLanguages(String email) {
         User user = getUserByEmail(email);
         return userLanguageRepository.findUserLanguagesByUser(user);
     }
 
     @Override
-    public List<UserTech> getLoginUserTechs(String email) {
+    public List<UserTech> getUserTechs(String email) {
         User user = getUserByEmail(email);
         return userTechRepository.findUserTechesByUser(user);
     }

@@ -14,9 +14,9 @@ public interface UserService {
 
     User getUserByEmail(String email);
 
-    List<UserLanguage> getLoginUserLanguages(String email);
+    List<UserLanguage> getUserLanguages(String email);
 
-    List<UserTech> getLoginUserTechs(String email);
+    List<UserTech> getUserTechs(String email);
 
     void addMyLanguageInMyPage(String email, MyLanguageReqDto dto);
 
