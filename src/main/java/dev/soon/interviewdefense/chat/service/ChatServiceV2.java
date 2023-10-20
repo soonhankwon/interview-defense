@@ -86,7 +86,7 @@ public class ChatServiceV2 implements ChatService {
                 .model("gpt-3.5-turbo")
                 .messages(List.of(new com.theokanning.openai.completion.chat.ChatMessage("system", rolePrompt),
                         new com.theokanning.openai.completion.chat.ChatMessage("user", userPrompt)))
-                .maxTokens(100)
+                .maxTokens(1000)
                 .stream(true)
                 .build();
     }
