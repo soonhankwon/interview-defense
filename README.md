@@ -97,7 +97,8 @@
 
 * [x] 멘토링모드 OpenAPI 스트리밍 기능 활용
 * [x] 멘토링 답변에 대한 연관질문 생성 기능 구현
-* [x] NCloud 에서 AWS로 서버이전  
+* [x] NCloud 에서 AWS로 서버이전
+* [ ] Backend RestAPI로 리팩토링 + 프론트 React로 렌더링 작업
 
 <!-- Contact -->
 ## :handshake: Contact
