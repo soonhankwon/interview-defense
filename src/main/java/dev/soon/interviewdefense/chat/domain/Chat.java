@@ -1,6 +1,7 @@
 package dev.soon.interviewdefense.chat.domain;
 
-import dev.soon.interviewdefense.chat.controller.dto.ChatRoomReqDto;
+import dev.soon.interviewdefense.chat.controller.dto.ChatResponse;
+import dev.soon.interviewdefense.chat.controller.dto.ChatRequest;
 import dev.soon.interviewdefense.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,9 +36,13 @@ public class Chat {
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<ChatMessage> chatMessages = new ArrayList<>();
 
-    public Chat(ChatRoomReqDto dto, User user) {
+    public Chat(ChatRequest dto, User user) {
         this.topic = dto.topic();
         this.user = user;
         this.createAt = LocalDateTime.now();
+    }
+
+    public ChatResponse ofResponse() {
+        return new ChatResponse(this.topic, this.createAt, this.id);
     }
 }

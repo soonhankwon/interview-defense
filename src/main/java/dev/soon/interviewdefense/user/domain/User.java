@@ -1,15 +1,14 @@
 package dev.soon.interviewdefense.user.domain;
 
-import dev.soon.interviewdefense.web.dto.MyLanguageReqDto;
-import dev.soon.interviewdefense.web.dto.MyPageUpdateForm;
-import dev.soon.interviewdefense.web.dto.MyTechReqDto;
+import dev.soon.interviewdefense.user.controller.dto.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @ToString
@@ -37,10 +36,10 @@ public class User {
     private Integer yearOfWorkExperience;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private final List<UserLanguage> userLanguages = new ArrayList<>();
+    private final Set<UserLanguage> userLanguages = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private final List<UserTech> userTechs = new ArrayList<>();
+    private final Set<UserTech> userTechs = new HashSet<>();
 
     public User(String email, String nickname, String oauth2Provider, String imageUrl) {
         this.email = email;
@@ -51,17 +50,40 @@ public class User {
         this.yearOfWorkExperience = 0;
     }
 
-    public void update(MyPageUpdateForm form) {
-        this.nickname = form.nickname();
-        this.position = form.position();
-        this.yearOfWorkExperience = form.yearOfWorkExperience();
+    public LoginUserResponse ofResponse() {
+        return new LoginUserResponse(
+                this.email,
+                this.nickname,
+                this.snsType,
+                this.imageUrl,
+                this.position,
+                this.yearOfWorkExperience,
+                this.userLanguages.stream().map(UserLanguage::getLanguage).collect(Collectors.toList()),
+                this.userTechs.stream().map(UserTech::getTech).collect(Collectors.toList()));
     }
 
-    public void addMyLanguage(MyLanguageReqDto dto) {
-        this.userLanguages.add(new UserLanguage(this, dto.name()));
+    public void updatePosition(UserPositionUpdateRequest dto) {
+        this.position = dto.position();
     }
 
-    public void addMyTech(MyTechReqDto dto) {
-        this.userTechs.add(new UserTech(this, dto.name()));
+    public void addLanguages(UserLanguageRequest dto) {
+        dto.languages().forEach(language -> {
+            UserLanguage userLanguage = new UserLanguage(this, language);
+            this.userLanguages.add(userLanguage);
+        });
+    }
+
+    public void addTechs(UserTechRequest dto) {
+        dto.techs().forEach(tech -> {
+            UserTech userTech = new UserTech(this, tech);
+            this.userTechs.add(userTech);
+        });
+    }
+
+    public void updateWorkYear(UserWorkExperienceYearUpdateRequest dto) {
+        if(dto.year() < 0) {
+            throw new IllegalArgumentException("arg must over 0");
+        }
+        this.yearOfWorkExperience = dto.year();
     }
 }

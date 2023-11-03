@@ -2,12 +2,10 @@ package dev.soon.interviewdefense.user.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
-@ToString
 @Getter
 @Entity
 @Table(name = "user_tech", indexes = {
@@ -29,5 +27,12 @@ public class UserTech {
     public UserTech(User user, Tech tech) {
         this.user = user;
         this.tech = tech;
+    }
+
+    @Override
+    public String toString() {
+        return "UserTech{" +
+                "tech=" + tech +
+                '}';
     }
 }

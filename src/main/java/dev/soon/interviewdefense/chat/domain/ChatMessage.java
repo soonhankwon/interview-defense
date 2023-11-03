@@ -1,5 +1,6 @@
 package dev.soon.interviewdefense.chat.domain;
 
+import dev.soon.interviewdefense.chat.controller.dto.ChatMessageRecordResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -36,5 +37,9 @@ public class ChatMessage {
         this.chat = chat;
         this.sender = sender;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public ChatMessageRecordResponse ofResponse() {
+        return new ChatMessageRecordResponse(this.id, this.sender, this.message);
     }
 }

@@ -1,62 +1,53 @@
 package dev.soon.interviewdefense.chat.controller;
 
-import dev.soon.interviewdefense.chat.controller.dto.ChatRoomReqDto;
-import dev.soon.interviewdefense.chat.domain.Chat;
-import dev.soon.interviewdefense.chat.domain.ChatMessage;
+import dev.soon.interviewdefense.chat.controller.dto.ChatMessageRecordResponse;
+import dev.soon.interviewdefense.chat.controller.dto.ChatRequest;
+import dev.soon.interviewdefense.chat.controller.dto.ChatResponse;
 import dev.soon.interviewdefense.chat.service.ChatService;
 import dev.soon.interviewdefense.security.SecurityUser;
-import dev.soon.interviewdefense.user.domain.User;
-import dev.soon.interviewdefense.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/chat")
+@RequestMapping("/api/chats")
 public class ChatController {
-    private final ChatService chatServiceV2;
-    private final UserService userService;
 
-    @GetMapping("/create")
-    public String chatRoom(Model model) {
-        model.addAttribute("chat", new Chat());
-        return "chatRoomForm";
+    private final ChatService chatService;
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @GetMapping
+    public List<ChatResponse> getChatsByUser(@AuthenticationPrincipal SecurityUser user) {
+        String email = user.getUsername();
+        return chatService.getChatsByUser(email);
     }
 
-    @PostMapping("/create")
-    public String createChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
-                                 @ModelAttribute("chat") ChatRoomReqDto dto) {
-        String email = securityUser.getUsername();
-        Long chatRoomId = chatServiceV2.createChatRoom(email, dto);
-        return "redirect:/chat/" + chatRoomId;
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping
+    public Long createChat(@AuthenticationPrincipal SecurityUser user,
+                           @RequestBody ChatRequest dto) {
+        String email = user.getUsername();
+        return chatService.createChat(email, dto);
     }
 
-    @GetMapping("/{chatRoomId}")
-    public String getChatRoom(@AuthenticationPrincipal SecurityUser securityUser,
-                              @PathVariable Long chatRoomId,
-                              Model model) {
-        String email = securityUser.getUsername();
-        Chat chatRoom = chatServiceV2.getChatRoom(email, chatRoomId);
-        List<ChatMessage> chatMessagesInChatRoom = chatServiceV2.getChatRoomMessages(chatRoom);
-        model.addAttribute("chatMessages", chatMessagesInChatRoom);
-
-        User loginUser = userService.getUserByEmail(email);
-        model.addAttribute("user", loginUser);
-        return "chatRoom";
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{chatId}")
+    public List<ChatMessageRecordResponse> getChatMessageRecordByChat(@PathVariable Long chatId) {
+        return chatService.getChatMessageRecordByChat(chatId);
     }
 
-    @PostMapping("/{chatRoomId}/delete")
-    public String deleteChat(@PathVariable Long chatRoomId,
-                             @AuthenticationPrincipal SecurityUser securityUser) {
-        String email = securityUser.getUsername();
-        chatServiceV2.deleteChat(chatRoomId, email);
-        return "redirect:/";
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{chatId}")
+    public String deleteChat(@AuthenticationPrincipal SecurityUser user,
+                                        @PathVariable Long chatId) {
+        String email = user.getUsername();
+        chatService.deleteChat(email, chatId);
+        return "deleted";
     }
 }
