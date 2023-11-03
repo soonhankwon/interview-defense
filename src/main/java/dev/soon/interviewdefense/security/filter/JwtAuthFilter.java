@@ -1,9 +1,12 @@
 package dev.soon.interviewdefense.security.filter;
 
+import dev.soon.interviewdefense.exception.ApiException;
+import dev.soon.interviewdefense.exception.CustomErrorCode;
 import dev.soon.interviewdefense.security.TokenStatus;
 import dev.soon.interviewdefense.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.internal.http2.ErrorCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,13 +37,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("request URL = {}, method={}", requestURI, request.getMethod());
         Optional<Cookie> accessToken = Arrays.stream(request.getCookies()).filter(i -> i.getName().equals("AccessToken")).findFirst();
         if(accessToken.isEmpty()) {
-            response.sendRedirect("/login?redirectURL=" + requestURI);
+            response.sendError(401);
             return;
         }
         String token = accessToken.get().getValue();
         TokenStatus tokenStatus = jwtService.validateToken(token);
         if(tokenStatus == TokenStatus.EXPIRED) {
-            response.sendRedirect("/");
+            response.sendError(401);
             return;
         }
         if(StringUtils.hasText(token) && tokenStatus == TokenStatus.VALID) {
