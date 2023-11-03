@@ -7,11 +7,11 @@ import dev.soon.interviewdefense.chat.domain.ChatMessage;
 import dev.soon.interviewdefense.chat.domain.ChatSender;
 import dev.soon.interviewdefense.chat.event.MessageSendEvent;
 import dev.soon.interviewdefense.chat.respository.ChatCacheStore;
-import dev.soon.interviewdefense.chat.respository.ChatMessageRepository;
 import dev.soon.interviewdefense.chat.respository.ChatRepository;
 import dev.soon.interviewdefense.chat.util.PromptGenerator;
 import dev.soon.interviewdefense.exception.ApiException;
 import dev.soon.interviewdefense.exception.CustomErrorCode;
+import dev.soon.interviewdefense.open_ai.service.OpenAiChatService;
 import io.reactivex.Flowable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +31,8 @@ import java.util.Objects;
 public class StreamCompletionHandler extends TextWebSocketHandler {
 
     private final ChatCacheStore cacheStore;
-    private final ChatMessageRepository chatMessageRepository;
     private final ChatRepository chatRepository;
-    private final ChatService chatServiceV2;
+    private final OpenAiChatService openAiChatService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public final static String DEEP_QUESTION_FLAG = "%deepQ%";
@@ -62,15 +61,13 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
         StringBuilder sb = new StringBuilder();
         Chat chat = cacheStore.getChatByCacheKey(email);
         if (hasDeepFlag(payload)) {
-            ChatMessage chatMessageDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat)
-                    .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LATEST_CHAT_MESSAGE));
             applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(DEEP_DIVE, chat, ChatSender.USER)));
             Flowable<ChatCompletionChunk> responseFlowable =
-                    chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() + "]" + PromptGenerator.DEEP_DIVE);
+                    openAiChatService.generateStreamResponse(chat, "[" + payload.replace(DEEP_QUESTION_FLAG, "").trim() + "]" + PromptGenerator.DEEP_DIVE);
             subscribeFlowable(session, chat, sb, responseFlowable);
         } else {
             applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(payload, chat, ChatSender.USER)));
-            Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, payload);
+            Flowable<ChatCompletionChunk> responseFlowable = openAiChatService.generateStreamResponse(chat, payload);
             subscribeFlowable(session, chat, sb, responseFlowable);
         }
     }
