@@ -2,12 +2,10 @@ package dev.soon.interviewdefense.user.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
-@ToString
 @Getter
 @Entity
 @Table(name = "user_language", indexes = {
@@ -29,5 +27,12 @@ public class UserLanguage {
     public UserLanguage(User user, Language language) {
         this.user = user;
         this.language = language;
+    }
+
+    @Override
+    public String toString() {
+        return "UserLanguage{" +
+                "language=" + language +
+                '}';
     }
 }
