@@ -29,7 +29,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer ignoringCustomizer() {
 
-        return (web) -> web.ignoring().antMatchers("/", "/css/**", "/logout", "/*.ico", "/error", "/oauth/**", "/image/**", "/js/**");
+        return (web) -> web.ignoring().antMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/*.ico", "/oauth/**", "/v1/chat/**");
     }
 
     @Bean
@@ -39,7 +39,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.antMatchers("/", "/login/**", "/favicon.ico", "/css/**").permitAll();
+                    auth.antMatchers("/", "/favicon.ico").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

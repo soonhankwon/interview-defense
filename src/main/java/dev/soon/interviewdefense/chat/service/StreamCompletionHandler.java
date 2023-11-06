@@ -22,7 +22,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.security.Principal;
 import java.util.Objects;
 
 @Slf4j
@@ -42,24 +41,23 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        Principal principal = session.getPrincipal();
-        if (Objects.requireNonNull(principal).getName() != null) {
-            cacheStore.removeCache(principal.getName());
-        }
+        String chatSessionId = session.getId();
+        Objects.requireNonNull(chatSessionId);
+        cacheStore.removeCache(chatSessionId);
         session.close();
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
         start = System.currentTimeMillis();
         String payload = message.getPayload();
-        String email = Objects.requireNonNull(session.getPrincipal()).getName();
+        String chatSessionId = session.getId();
         if(hasStartFlag(payload)) {
-            saveChatInMap(payload, email);
+            saveChatInMap(payload, chatSessionId);
             return;
         }
         StringBuilder sb = new StringBuilder();
-        Chat chat = cacheStore.getChatByCacheKey(email);
+        Chat chat = cacheStore.getChatByCacheKey(chatSessionId);
         if (hasDeepFlag(payload)) {
             applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(DEEP_DIVE, chat, ChatSender.USER)));
             Flowable<ChatCompletionChunk> responseFlowable =
@@ -76,11 +74,11 @@ public class StreamCompletionHandler extends TextWebSocketHandler {
         return payload.contains(START_CHAT_FLAG);
     }
 
-    private void saveChatInMap(String payload, String email) {
+    private void saveChatInMap(String payload, String chatSessionId) {
         Long chatId = Long.parseLong(payload.replaceAll(START_CHAT_FLAG, ""));
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_CHATROOM_IN_DB));
-        cacheStore.cacheEmailAndChat(email, chat);
+        cacheStore.cacheChatSessionIdAndChat(chatSessionId, chat);
     }
 
     private boolean hasDeepFlag(String payload) {
