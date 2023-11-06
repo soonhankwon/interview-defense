@@ -16,7 +16,7 @@
 
 <!-- Web URL -->
 ### :globe_with_meridians: API
-- https://tech-mentor.store
+- http://43.202.192.55/
 
 <!-- Screenshots -->
 ### :camera: Screenshots
@@ -52,8 +52,6 @@
   - AWS VPC
   - AWS EC2
   - AWS RDS
-  - AWS Route53
-  - AWS Certificate Manager
   - Docker
   - Github Actions
 </details>
