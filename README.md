@@ -15,7 +15,7 @@
 ## :star2: About the Project
 
 <!-- Web URL -->
-### :globe_with_meridians: web url
+### :globe_with_meridians: api
 - http://43.202.192.55/
 
 <!-- Screenshots -->
@@ -43,7 +43,7 @@
 <details>
   <summary>Frontend</summary>
  
-  - Thymeleaf
+  - React
   - Javascript
 </details>
 
@@ -98,7 +98,7 @@
 * [x] 멘토링모드 OpenAPI 스트리밍 기능 활용
 * [x] 멘토링 답변에 대한 연관질문 생성 기능 구현
 * [x] NCloud 에서 AWS로 서버이전
-* [ ] Backend RestAPI로 리팩토링 + 프론트 React로 렌더링 작업
+* [x] Backend RestAPI로 리팩토링 + 프론트 React로 렌더링 작업
 
 <!-- Contact -->
 ## :handshake: Contact
