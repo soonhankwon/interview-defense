@@ -2,7 +2,7 @@
 # :notebook_with_decorative_cover: Table of Contents
 
 - [About the Project](#star2-about-the-project)
-  * [Web url](#globe_with_meridians-web-url)
+  * [API](#globe_with_meridians-web-url)
   * [Screenshots](#camera-screenshots)
   * [Tech Stack](#space_invader-tech-stack)
   * [Architecture](#building_construction-architecture)
@@ -15,8 +15,8 @@
 ## :star2: About the Project
 
 <!-- Web URL -->
-### :globe_with_meridians: api
-- http://43.202.192.55/
+### :globe_with_meridians: API
+- https://tech-mentor.store
 
 <!-- Screenshots -->
 ### :camera: Screenshots
@@ -41,13 +41,6 @@
 </details>
 
 <details>
-  <summary>Frontend</summary>
- 
-  - React
-  - Javascript
-</details>
-
-<details>
 <summary>Database</summary>
  
   - MySQL 8.0.33</a></li>
@@ -59,6 +52,8 @@
   - AWS VPC
   - AWS EC2
   - AWS RDS
+  - AWS Route53
+  - AWS Certificate Manager
   - Docker
   - Github Actions
 </details>
@@ -91,6 +86,7 @@
 - [멘토링 서비스시 채팅(Chat) 조회 DB 콜 개선]
   * [ConcurrentHashMap 활용 - 불필요 DB콜 개선, 약 4.6초, 개선율 약 26.93%](https://www.notion.so/Chat-DB-ConcurrentHashMap-648ad21769d94d7ba61e9036f016de19?pvs=4)
 - [NCloud 크레딧 소진으로 인한 AWS 이전 - 클라우드 인프라 구축]
+- [RestAPI로 리팩토링 - 프론트엔드 React를 활용한 VIEW로직 백엔드에서 분리] 
 
 <!-- Roadmap -->
 ## :compass: Roadmap
