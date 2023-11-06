@@ -46,14 +46,6 @@ jobs:
           echo "${{ secrets.APPLICATION }}" >> ./application.properties
         shell: bash
 
-      - name: Set messages.properties for main
-        run: |
-          # main 설정 파일 디렉토리로 이동
-          cd ./src/main/resources
-          touch ./messages.properties
-          echo "${{ secrets.MESSAGES }}" >> ./messages.properties
-        shell: bash
-
       # Gradle build
       - name: Build with Gradle
         run: ./gradlew bootJar
