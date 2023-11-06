@@ -19,12 +19,8 @@ public class ChatCacheStore {
         this.webSocketSessionUserChatMap = new ConcurrentHashMap<>();
     }
 
-    public void cacheChat(Chat chat) {
-        chatMap.put(chat.getId(), chat);
-    }
-
-    public void cacheEmailAndChat(String email, Chat chat) {
-        this.webSocketSessionUserChatMap.put(email, chat);
+    public void cacheChatSessionIdAndChat(String chatSessionId, Chat chat) {
+        this.webSocketSessionUserChatMap.put(chatSessionId, chat);
     }
 
     public <T> Chat getChatByCacheKey(T key) {
@@ -37,10 +33,6 @@ public class ChatCacheStore {
             return webSocketSessionUserChatMap.get(key);
         }
         throw new IllegalArgumentException("invalid key!!");
-    }
-
-    public boolean existsCacheByEmail(Long chatId) {
-        return this.chatMap.containsKey(chatId);
     }
 
     public <T> void removeCache(T key) {
