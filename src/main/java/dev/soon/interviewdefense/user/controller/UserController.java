@@ -27,7 +27,6 @@ public class UserController {
     }
 
     @PatchMapping("/positions")
-    @Transactional
     public ResponseEntity<String> updateUserPosition(@AuthenticationPrincipal SecurityUser user,
                                              @RequestBody UserPositionUpdateRequest dto) {
         String email = user.getUsername();
@@ -36,7 +35,6 @@ public class UserController {
     }
 
     @PostMapping("/languages")
-    @Transactional
     public ResponseEntity<String> addUserLanguages(@AuthenticationPrincipal SecurityUser user,
                                  @RequestBody UserLanguageRequest dto) {
         String email = user.getUsername();
@@ -45,7 +43,6 @@ public class UserController {
     }
 
     @DeleteMapping("/languages")
-    @Transactional
     public ResponseEntity<String> deleteUserLanguage(@AuthenticationPrincipal SecurityUser user,
                                    @RequestBody UserLanguageDeleteRequest dto) {
         String email = user.getUsername();
@@ -63,7 +60,6 @@ public class UserController {
     }
 
     @DeleteMapping("/techs")
-    @Transactional
     public ResponseEntity<String> deleteUserTech(@AuthenticationPrincipal SecurityUser user,
                                @RequestBody UserTechDeleteRequest dto) {
         String email = user.getUsername();
@@ -72,7 +68,6 @@ public class UserController {
     }
 
     @PatchMapping("/work-experience-year")
-    @Transactional
     public ResponseEntity<String> updateUserWorkExperienceYear(@AuthenticationPrincipal SecurityUser user,
                                @RequestBody UserWorkExperienceYearUpdateRequest dto) {
         String email = user.getUsername();
