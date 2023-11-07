@@ -40,6 +40,7 @@
 - Spring Data JPA
 - Spring Security 5.7.10
 - Spring WebSocket 5.3.29
+- Swagger 3.0.0
 - MySQL 8.0.33
 
 #### :computer: DevOps
@@ -61,7 +62,7 @@
 
 <!-- API 명세서 -->
 ### :bookmark_tabs: api 명세서
-- http://43.202.192.55/
+- http://43.202.192.55/swagger-ui/index.html#/
 
 <!-- 이슈 해결 과정 -->
 ### :checkered_flag: 이슈 해결 과정
