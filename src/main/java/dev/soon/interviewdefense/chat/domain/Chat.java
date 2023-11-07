@@ -9,6 +9,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,9 @@ public class Chat {
     }
 
     public ChatResponse ofResponse() {
-        return new ChatResponse(this.topic, this.createAt, this.id);
+        return new ChatResponse(
+                this.topic,
+                this.createAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm")),
+                this.id);
     }
 }
