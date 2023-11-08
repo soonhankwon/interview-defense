@@ -212,7 +212,7 @@ private void subscribeFlowable(WebSocketSession session, Chat chat, StringBuilde
 </details>
 
 <details>
-<summary>GPT StreamChatCompletion 응답시간 개선: 버퍼를 활용하여 약1.2초, 개선율 6.87% - click</summary>
+<summary>GPT StreamChatCompletion 응답시간 개선: 버퍼를 활용하여 약 1.2초, 개선율 6.87% - click</summary>
 <div markdown="1">
 
 ```plain
@@ -269,18 +269,18 @@ private void subscribeFlowable(WebSocketSession session, Chat chat, StringBuilde
 </details>
 
 <details>
-<summary>멘토링 서비스시 채팅(Chat)조회 DB 콜 개선 - click</summary>
+<summary>멘토링 서비스시 채팅(Chat)조회 DB 콜 개선: ConcurrentHashMap을 활용한 자체 캐싱으로 Latency 약 4.6초, 개선율 26.93% - click</summary>
 <div markdown="1">
 
 ```plain
-- StreamCompletionHandler에서 채팅 메세지를 저장할 때 Chat객체를 조회하는 DB콜을 어떻게하면 줄일수 있지않을까?라는 생각이 들었습니다. 
-- 프론트에서 백엔드 요청에 chatId + 메세지 종류 플래그 + 메세지를 전송하면 이것을 split 으로 분리 그리고 Chat(사용자의 채팅방)을 chatId로 조회해서 ChatMessage DB에 메세지를 저장하는 로직이었습니다.
+- StreamCompletionHandler에서 채팅 메세지를 저장할 때 Chat객체를 조회하는 DB콜을 어떻게하면 줄일수 있지않을까?라는 생각이 들었습니다.  
+- 프론트에서 백엔드 요청에 chatId + 메세지 종류 플래그 + 메세지를 전송하면 이것을 split으로 분리 그리고 Chat(사용자의 채팅방)을 chatId로 조회해서 ChatMessage DB에 메세지를 저장하는 로직이었습니다.
 
 - 자체적으로 메모리에 웹소켓세션ID를 Key로하고 Value를 Chat으로 캐싱하여 사용하면 DB콜을 줄이고 성능을 개선시킬수 있을것이라고 예상했습니다.
   * ConcurrentHashMap을 사용하는 메모리 저장소 컴포넌트를 CacheStore라고 명하여 만들었습니다.
   * 해당부분은 Redis와 같은 In-memory DB로 대체할 수 있는 부분이지만, 싱글 인스턴스인 현재 애플리케이션 구조상 ConcurrentHashMap으로 충분하다고 생각했습니다.
 - 아래는 Before와 After의 코드입니다.
-- 테스트 결과 중복되는 DB콜을 줄일수 있었습니다. Latency 감소는 약 4.6초(기존 약 17초 -> 약 12.5초), 개선율은 26.93%을 보였습니다.
+- 테스트 결과 불필요한 DB콜을 줄일수 있었습니다. Latency 감소는 약 4.6초(기존 약 17초 -> 약 12.5초), 개선율은 26.93%을 보였습니다.
 ```
 - Before
 ```java
