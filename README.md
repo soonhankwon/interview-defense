@@ -9,6 +9,7 @@
   * [요구사항 분석](#2nd_place_medal-요구사항-분석)
   * [api 명세서](#bookmark_tabs-api-명세서)
   * [erd](#book-erd)
+  * [api 구현 과정]
   * [이슈 해결 과정](#checkered_flag-이슈-해결-과정)
 - [로드맵](#compass-로드맵)
 - [Contact](#handshake-contact)
@@ -105,7 +106,9 @@
 
 <!-- ERD -->
 ### :book: erd
-- [ERD](http://43.202.192.55/swagger-ui/index.html#/)
+- [ERD](https://github.com/soonhankwon/tech-mentor-backend/assets/113872320/c7537e0b-1777-4208-9b54-2bd3f65dfac0)
+
+<!-- api 구현 과정 -->
 
 <!-- 이슈 해결 과정 -->
 ### :checkered_flag: 이슈 해결 과정
