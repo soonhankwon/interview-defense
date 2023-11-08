@@ -130,6 +130,7 @@
 - AI가 채팅흐름에서 자신의 답변이 무엇이었는지 망각하는 경우가 40~50%의 높은 확률로 발생하였습니다.
 - 어떻게하면 AI가 채팅흐름을 잘 기억하게 할 수 있을까?라는 고민을 했습니다.
 - 프롬프트 엔지니어링 방법중 AI의 지속적인 학습에 관한 레퍼런스를 참조했습니다.
+
 - AI의 이전 답변을 프롬프트에 추가시켜주는 방법을 적용했습니다.
   * ex) ${이전 AI답변} 에 대한 탐구할 수 있는 질문 목록을 추천해주세요.
 - 해당 방법 적용으로 딥다이브 기능의 경우 현재까지 망각하는 케이스는 검출되지 않았습니다.
@@ -258,10 +259,117 @@ private void subscribeFlowable(WebSocketSession session, Chat chat, StringBuilde
 </div>
 </details>
 
-- [멘토링 서비스시 채팅(Chat) 조회 DB 콜 개선]
-  * [ConcurrentHashMap 활용 - 불필요 DB콜 개선, 약 4.6초, 개선율 약 26.93%](https://www.notion.so/Chat-DB-ConcurrentHashMap-648ad21769d94d7ba61e9036f016de19?pvs=4)
-- [NCloud 크레딧 소진으로 인한 AWS 이전 - 클라우드 인프라 구축]
-- [RestAPI로 리팩토링 - 프론트엔드 React를 활용한 VIEW로직 백엔드에서 분리] 
+<details>
+<summary>멘토링 서비스시 채팅(Chat)조회 DB 콜 개선 - click</summary>
+<div markdown="1">
+
+```plain
+- StreamCompletionHandler에서 채팅 메세지를 저장할 때 Chat객체를 조회하는 DB콜을 어떻게하면 줄일수 있지않을까?라는 생각이 들었습니다. 
+- 프론트에서 백엔드 요청에 chatId + 메세지 종류 플래그 + 메세지를 전송하면 이것을 split 으로 분리 그리고 Chat(사용자의 채팅방)을 chatId로 조회해서 ChatMessage DB에 메세지를 저장하는 로직이었습니다.
+
+- 자체적으로 메모리에 웹소켓세션ID를 Key로하고 Value를 Chat으로 캐싱하여 사용하면 DB콜을 줄이고 성능을 개선시킬수 있을것이라고 예상했습니다.
+  * ConcurrentHashMap을 사용하는 메모리 저장소 컴포넌트를 CacheStore라고 명하여 만들었습니다.
+  * 해당부분은 Redis와 같은 In-memory DB로 대체할 수 있는 부분이지만, 싱글 인스턴스인 현재 애플리케이션 구조상 ConcurrentHashMap으로 충분하다고 생각했습니다.
+- 아래는 Before와 After의 코드입니다.
+- 테스트 결과 중복되는 DB콜을 줄일수 있었습니다. Latency 감소는 약 4.6초(기존 약 17초 -> 약 12.5초), 개선율은 26.93%을 보였습니다.
+```
+- Before
+```java
+@Override
+public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		if(payload.contains(DEEP_QUESTION_FLAG)) {
+		  // 시그널1! split으로 코드가독성이 떨어지고 형변환 코드 또한 지속적으로 생김
+    String[] payloadSegments = payload.split(DEEP_QUESTION_FLAG);
+    Long chatId = Long.parseLong(payloadSegments[0]);
+    String userMessage = payloadSegments[1];
+		
+		  // 시그널2! 지속해서 chat을 DB에서 조회하는데 불필요하지 않을까?
+    Chat chat = chatRepository.findById(chatId)
+           .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_CHATROOM_IN_DB));
+		  ChatMessage chatMessageDesc = chatMessageRepository.findTopByChatOrderByCreatedAtDesc(chat)
+           .orElseThrow(() -> new ApiException(CustomErrorCode.NOT_EXISTS_LATEST_CHAT_MESSAGE));
+
+    chatMessageRepository.save(new ChatMessage(userMessage.substring(3), chat, ChatSender.USER));
+    Flowable<ChatCompletionChunk> responseFlowable = chatServiceV2.generateStreamResponse(chat, "[" + chatMessageDesc.getMessage() +"]" + "글에서" + userMessage);
+		.........
+		//비슷한 로직들 ...........
+}
+```
+- After
+```java
+// 커스텀한 메모리 캐싱 스토어입니다.
+@Component
+public class ChatCacheStore {
+
+    // Key: WebSocketSessionId, Value: Chat
+    private final Map<String, Chat> webSocketSessionUserChatMap;
+
+    public ChatCacheStore() {
+        this.webSocketSessionUserChatMap = new ConcurrentHashMap<>();
+    }
+
+    public void cacheChatSessionIdAndChat(String chatSessionId, Chat chat) {
+        this.webSocketSessionUserChatMap.put(chatSessionId, chat);
+    }
+
+    // key가 캐싱되어있다면 스토어에서 chat을 가져옵니다.
+    public <T> Chat getChatByCacheKey(T key) {
+        if(key instanceof String) {
+            log.info("cache hit={}", key);
+            return webSocketSessionUserChatMap.get(key);
+        }
+        throw new IllegalArgumentException("invalid key!!");
+    }
+
+    // key가 캐싱되어있다면 스토어에서 chat을 삭제합니다(리소스 정리).
+    public <T> void removeCache(T key) {
+        if(key instanceof String) {
+            this.webSocketSessionUserChatMap.remove(key);
+        }
+        throw new IllegalArgumentException("invalid key!!");
+    }
+```
+```java
+    // 웹소켓 세션이 끝난다면 캐시스토어에서 리소스정리를 합니다.
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        String chatSessionId = session.getId();
+        Objects.requireNonNull(chatSessionId);
+        cacheStore.removeCache(chatSessionId);
+        session.close();
+    }
+
+    @Override
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
+        start = System.currentTimeMillis();
+        String payload = message.getPayload();
+        String chatSessionId = session.getId();
+        // 프론트에서 웹소켓 시작 Flag를 받는다면 캐시스토어에 웹소켓세션ID와 Chat(payload의 정보로 객체 생성)을 저장합니다.
+        if(hasStartFlag(payload)) {
+            saveChatInMap(payload, chatSessionId);
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        // 이후 캐시스토어에 웹소켓세션ID가 있다면 캐시히트되어 DB조회없이 chat을 사용합니다.
+        Chat chat = cacheStore.getChatByCacheKey(chatSessionId);
+        if (hasDeepFlag(payload)) {
+            applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(DEEP_DIVE, chat, ChatSender.USER)));
+            Flowable<ChatCompletionChunk> responseFlowable =
+                    openAiChatService.generateStreamResponse(chat, "[" + payload.replace(DEEP_QUESTION_FLAG, "").trim() + "]" + PromptGenerator.DEEP_DIVE);
+            subscribeFlowable(session, chat, sb, responseFlowable);
+        } else {
+            applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(payload, chat, ChatSender.USER)));
+            Flowable<ChatCompletionChunk> responseFlowable = openAiChatService.generateStreamResponse(chat, payload);
+            subscribeFlowable(session, chat, sb, responseFlowable);
+        }
+    }
+```
+</div>
+</details>
+
+- 문서화 중인 이슈 해결 리스트들
+  - [NCloud 크레딧 소진으로 인한 AWS 이전 - 클라우드 인프라 구축]
+  - [RestAPI로 리팩토링 - Thymeleaf 제거 및 프론트엔드 React를 활용한 VIEW로직을 백엔드에서 분리] 
 
 <!-- 로드맵 -->
 ## :compass: 로드맵
