@@ -5,6 +5,7 @@
   * [스크린샷](#camera-스크린샷)
   * [기술스택](#space_invader-기술스택)
   * [아키텍처](#building_construction-아키텍처)
+  * [프론트엔드](#movie_camera-프론트엔드)
 - [프로젝트 구현 및 이슈해결 과정](#fountain_pen-프로젝트-구현-및-이슈-해결-과정)
   * [요구사항 분석](#2nd_place_medal-요구사항-분석)
   * [api 명세서](#bookmark_tabs-api-명세서)
@@ -16,15 +17,16 @@
 
 <!-- 프로젝트 소개 -->
 ## :star2: 프로젝트 소개
+- OpenAI API 를 활용한 AI 멘토링 및 딥다이브 웹 애플리케이션 백엔드 RestAPI입니다.
 
 <!-- 핵심기능 -->
 ### :dart: 핵심기능
-
-- OpenAI API 를 활용한 AI 멘토링 및 딥다이브 웹 애플리케이션 백엔드 RestAPI입니다.
-- 멘토링 시 주제별 전문가의 멘토링을 받을 수 있습니다.
-- 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링으로 보다 정확하고 이해하기 쉽게 예시를 들어 해당 주제의 전문가 답변을 제공합니다.
-- 멘토링 답변에 대한 탐구할만한 연관질문 생성기능(DEEP DIVE)을 제공합니다.
+- 주제별 전문가의 멘토링 API
+- 질문에 대한 멘토링으로 진행되며, 프롬프트 엔지니어링이 적용되어 보다 정확하고 이해하기 쉽게 예시를 들어 해당 주제의 전문가 답변을 제공합니다.
+- 멘토링 답변에 대한 탐구할만한 연관질문 생성(DEEP DIVE) API
 - 딥다이브 기능으로 주제에 연관된 여러 질문을 생성해줌으로써 주제에 대한 깊은 이해와 탐구가 가능하도록 합니다.
+- 유저 가입 및 카카오 Oauth로그인 API
+- 유저 언어, 기술, 경력사항 추가 및 업데이트 API
 
 <!-- 스크린샷 -->
 ### :camera: 스크린샷
@@ -59,6 +61,12 @@
 <div align="center"> 
 <img src="https://github.com/soonhankwon/tech-interview-defense/assets/113872320/ab99c965-e925-4de5-bfcc-a8b5480bfe0d" width="540" height="330">
 </div>
+
+<!-- 프론트엔드 -->
+### :movie_camera: 프론트엔드
+- 백엔드 API는 AWS EC2로 호스팅되고 있으며 리액트앱으로 테스팅한 결과 모두 정상작동합니다.
+- 아래 링크의 React App을 사용해서 백엔드 API를 사용할 수 있습니다.
+- https://github.com/soonhankwon/tech-mentor-frontend
 
 <!-- 프로젝트 구현 및 이슈 해결 과정 -->
 ## :fountain_pen: 프로젝트 구현 및 이슈 해결 과정
@@ -104,7 +112,8 @@
 ### :bookmark_tabs: api 명세서
 - [Swagger API 명세서](http://43.202.192.55/swagger-ui/index.html#/)
 - ws://43.202.192.55/v1/chat
-  - 채팅메세지를 받아 멘토링을 제공하는 웹소켓 엔드포인트 API 
+  - 채팅메세지를 받아 멘토링을 제공하는 웹소켓 엔드포인트 API
+  - 프론트엔드에서 Flag(%start%, %deep%)를 포함한 메세지 문자열을 받아 일반 멘토링 및 딥다이브 API를 구별하여 제공합니다.
 <!-- ERD -->
 ### :book: erd
 
