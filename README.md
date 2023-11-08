@@ -9,8 +9,8 @@
   * [요구사항 분석](#2nd_place_medal-요구사항-분석)
   * [api 명세서](#bookmark_tabs-api-명세서)
   * [erd](#book-erd)
-  * [api 구현 과정]
-  * [이슈 해결 과정](#checkered_flag-이슈-해결-과정)
+  * [api 구현과정](#rocket-api-구현과정)
+  * [이슈 해결과정](#checkered_flag-이슈-해결과정)
 - [로드맵](#compass-로드맵)
 - [Contact](#handshake-contact)
 
@@ -106,12 +106,21 @@
 
 <!-- ERD -->
 ### :book: erd
-- [ERD](https://github.com/soonhankwon/tech-mentor-backend/assets/113872320/c7537e0b-1777-4208-9b54-2bd3f65dfac0)
+
+<details>
+<summary>Diagram - click</summary>
+<div markdown="1">
+ 
+![tech-mentor-erd](https://github.com/soonhankwon/tech-mentor-backend/assets/113872320/c7537e0b-1777-4208-9b54-2bd3f65dfac0)
+ 
+</div>
+</details>
 
 <!-- api 구현 과정 -->
+### :rocket: api 구현과정
 
 <!-- 이슈 해결 과정 -->
-### :checkered_flag: 이슈 해결 과정
+### :checkered_flag: 이슈 해결과정
 - [딥다이브 질문생성시 AI의 상황에 맞지 않는 응답 다수 발생]
   * [프롬프트 엔지니어링의 지속적인 학습방법으로 개선](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
 - [멘토링 대기 Latency 약 10~15초]
