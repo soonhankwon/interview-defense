@@ -103,7 +103,8 @@
 <!-- API 명세서 -->
 ### :bookmark_tabs: api 명세서
 - [Swagger API 명세서](http://43.202.192.55/swagger-ui/index.html#/)
-
+- ws://43.202.192.55/v1/chat
+  - 채팅메세지를 받아 멘토링을 제공하는 웹소켓 엔드포인트 API 
 <!-- ERD -->
 ### :book: erd
 
@@ -121,12 +122,142 @@
 
 <!-- 이슈 해결 과정 -->
 ### :checkered_flag: 이슈 해결과정
-- [딥다이브 질문생성시 AI의 상황에 맞지 않는 응답 다수 발생]
-  * [프롬프트 엔지니어링의 지속적인 학습방법으로 개선](https://www.notion.so/AI-98e141417a1745a780ca57626429b144?pvs=4)
-- [멘토링 대기 Latency 약 10~15초]
-  * [GPT StreamChatCompletion 활용한 멘토링 응답대기 Latency 개선](https://www.notion.so/GPT-Stream-Completion-4dd198e0fe0745eab3ca1dad284c4e67?pvs=4)
-- [GPT StreamChatCompletion 응답시간 개선]
-  * [버퍼사용 - 약 1.2초, 개선율 6.87%](https://www.notion.so/GPT-StreamChatCompletion-5d83e24ec90b4e7282b0c310ea38690c?pvs=4)
+<details>
+<summary>AI의 상황에 맞지 않는 응답 다수 발생: AI의 지속적인 학습방법으로 개선 - click</summary>
+<div markdown="1">
+
+```plain
+- AI가 채팅흐름에서 자신의 답변이 무엇이었는지 망각하는 경우가 40~50%의 높은 확률로 발생하였습니다.
+- 어떻게하면 AI가 채팅흐름을 잘 기억하게 할 수 있을까?라는 고민을 했습니다.
+- 프롬프트 엔지니어링 방법중 AI의 지속적인 학습에 관한 레퍼런스를 참조했습니다.
+- AI의 이전 답변을 프롬프트에 추가시켜주는 방법을 적용했습니다.
+  * ex) ${이전 AI답변} 에 대한 탐구할 수 있는 질문 목록을 추천해주세요.
+- 해당 방법 적용으로 딥다이브 기능의 경우 현재까지 망각하는 케이스는 검출되지 않았습니다.
+```
+</div>
+</details>
+
+<details>
+<summary>사용자의 질문에 대한 멘토링 대기 Latency 약 17~18초 발생: GPT StreamChatCompletion & WebSocket을 활용한 개선 - click</summary>
+<div markdown="1">
+
+```plain
+- 멘토링 모드의 기존 GPT ChatCompletion 사용시 약 17~18초 정도의 Latency 를 보였습니다.
+- 더 심각한 문제는 일반적인 HTTP통신 특성상 해당 시간동안 사용자는 아무것도 보지 못하고 대기하고 있다는 점입니다. 
+
+- 해당 대기시간으로 사용자에게 지루함을 느끼게하고, 서비스를 이탈할 것이라는 문제점을 파악했습니다.
+
+- 실제 ChatGPT처럼 실시간 스트림으로 서비스를 제공할수 있을까?라는 고민을 했습니다.
+  * OpenAPI 레퍼런스를 살펴보니 ChatCompletion 이외에 StreamChatCompletion 서비스를 제공하고 있었습니다.
+  * StreamChatCompletion 서비스란 기존에 "JAVA란 객체지향.."라는 응답을 "J", "AVA", "란 객체", "지향.", ".","null"의 chunk로 실시간으로 조각조각 응답해주는 서비스입니다.
+
+- 실시간으로 수십 ~ 수백 ~ 수천개를 응답받는 특성상 웹소켓 프로토콜이 적합하다고 생각했습니다.
+  * 연결을 한 번 맺어놓고 응답을 쭈~~욱 받아서 채팅방에 실시간으로 렌더링해준다!
+
+- 아래는 웹소켓과 StreamChatCompletion을 구현한 코드입니다.
+- 스트림 서비스 사용으로 사용자는 실시간으로 응답을 볼 수 있게 되었습니다. 전체적인 응답대기 시간은 약 1~2초 개선되었습니다.
+```
+```java
+private void subscribeFlowable(WebSocketSession session, Chat chat, StringBuilder sb, Flowable<ChatCompletionChunk> responseFlowable) {
+        StringBuilder chunkBuffer = new StringBuilder();
+        ObjectMapper objectMapper = new ObjectMapper();
+        // StreamChatCompletion OpenAPI 서비스를 subscribe하는 로직입닌다.
+        responseFlowable.subscribe(
+                chunk -> {
+                    try {
+                        String response = chunk.getChoices().get(0).getMessage().getContent();
+                        // 해당 서비스의 마지막 응답에는 항상 null이 들어옵니다. 이것을 FinishFlag로 사용합니다.
+                        if (!hasStreamFinishFlag(response)) {
+                            chunkBuffer.append(response);
+                            sb.append(response);
+                            // 버퍼에 chunk를 저장해놓고 5개가 되면 소켓에 전송합니다. 
+                            if (chunkBuffer.length() >= 5) {
+                                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
+                                chunkBuffer.setLength(0);
+                            }
+                            return;
+                        }
+                        if (hasBufferRemainingChunk(chunkBuffer)) {
+                            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
+                            chunkBuffer.setLength(0);
+                        }
+                        applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(sb.toString(), chat, ChatSender.AI)));
+                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(null)));
+                        sb.setLength(0);
+
+                        long end = System.currentTimeMillis();
+                        log.info("streaming spend time={}", end - start);
+                    } catch (Exception e) {
+                        log.error("An error occurred while processing the flowable", e);
+                    }
+                },
+                Throwable::printStackTrace
+        );
+    }
+```
+</div>
+</details>
+
+</div>
+</details>
+
+<details>
+<summary>GPT StreamChatCompletion 응답시간 개선: 버퍼를 활용하여 약1.2초, 개선율 6.87% - click</summary>
+<div markdown="1">
+
+```plain
+- GPT StreamChatCompletion은 활용한 멘토링 기능은 서비스의 핵심 기능입니다.
+- 어떻게 하면 조금더 응답시간을 개선시킬수 있을까?라는 고민을 하였습니다.
+
+- 메모리와 하드디스크간에 속도차이 때문에 버퍼가 있는것처럼 여기에도 적용시킨다면 개선이되지 않을까?라는 생각이 들었습니다.
+- 아래의 코드처럼 5개씩 버퍼에 모아서 웹소켓에 전달해주는 방식을 적용했습니다.
+- 간단한 테스트 케이스들을 통해 Latency 감소 약1.2초, 개선율은 6.87%을 보였습니다.(기존 약18초 -> 약 16초 후반, 17초)
+```
+```java
+private void subscribeFlowable(WebSocketSession session, Chat chat, StringBuilder sb, Flowable<ChatCompletionChunk> responseFlowable) {
+        // 커스텀하게 만든 chunk(OpenAPI에서 응답받는 조각데이터) 버퍼입니다.
+        StringBuilder chunkBuffer = new StringBuilder();
+        ObjectMapper objectMapper = new ObjectMapper();
+        // StreamChatCompletion OpenAPI 서비스를 subscribe하는 로직입닌다.
+        responseFlowable.subscribe(
+                chunk -> {
+                    try {
+                        String response = chunk.getChoices().get(0).getMessage().getContent();
+                        // 해당 서비스의 마지막 응답에는 항상 null이 들어옵니다. 이것을 FinishFlag로 사용합니다.
+                        if (!hasStreamFinishFlag(response)) {
+                            // 버퍼에 chunk 데이터를 넣어줍니다.
+                            chunkBuffer.append(response);
+                            sb.append(response);
+                            // 버퍼에 chunk를 저장해놓고 5개 이상이라면 소켓에 전송합니다. 
+                            if (chunkBuffer.length() >= 5) {
+                                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
+                                // 버퍼를 비워줍니다.
+                                chunkBuffer.setLength(0);
+                            }
+                            return;
+                        }
+                        // 응답이 끝났는데 버퍼에 chunk가 남아있다면 소켓에 전송합니다.
+                        if (hasBufferRemainingChunk(chunkBuffer)) {
+                            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(chunkBuffer.toString())));
+                            chunkBuffer.setLength(0);
+                        }
+                        applicationEventPublisher.publishEvent(new MessageSendEvent(new ChatMessage(sb.toString(), chat, ChatSender.AI)));
+                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(null)));
+                        sb.setLength(0);
+
+                        long end = System.currentTimeMillis();
+                        log.info("streaming spend time={}", end - start);
+                    } catch (Exception e) {
+                        log.error("An error occurred while processing the flowable", e);
+                    }
+                },
+                Throwable::printStackTrace
+        );
+    }
+```
+</div>
+</details>
+
 - [멘토링 서비스시 채팅(Chat) 조회 DB 콜 개선]
   * [ConcurrentHashMap 활용 - 불필요 DB콜 개선, 약 4.6초, 개선율 약 26.93%](https://www.notion.so/Chat-DB-ConcurrentHashMap-648ad21769d94d7ba61e9036f016de19?pvs=4)
 - [NCloud 크레딧 소진으로 인한 AWS 이전 - 클라우드 인프라 구축]
