@@ -10,7 +10,6 @@
   * [요구사항 분석](#2nd_place_medal-요구사항-분석)
   * [api 명세서](#bookmark_tabs-api-명세서)
   * [erd](#book-erd)
-  * [api 구현과정](#rocket-api-구현과정)
   * [이슈 해결과정](#checkered_flag-이슈-해결과정)
 - [로드맵](#compass-로드맵)
 - [Contact](#handshake-contact)
@@ -125,9 +124,6 @@
  
 </div>
 </details>
-
-<!-- api 구현 과정 -->
-### :rocket: api 구현과정
 
 <!-- 이슈 해결 과정 -->
 ### :checkered_flag: 이슈 해결과정
